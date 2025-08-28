@@ -9,7 +9,7 @@
 /// - Test labeled account tracking
 use crate::{TestRewarder, tests::common::init_test_environment};
 use anyhow::Result;
-use solana_sdk::signature::Signer;
+use testsvm::prelude::*;
 
 #[test]
 fn test_complete_quarry_integration() -> Result<()> {

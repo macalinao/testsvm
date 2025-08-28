@@ -167,6 +167,7 @@
 
 pub mod account_ref;
 pub mod litesvm_helpers;
+pub mod prelude;
 pub mod testsvm;
 pub mod tx_result;
 

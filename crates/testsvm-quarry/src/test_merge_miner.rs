@@ -1,3 +1,19 @@
+//! # Merge Miner Testing Utilities
+//!
+//! Test helpers for Quarry merge mining functionality.
+//!
+//! This module provides the `TestMergeMiner` struct which manages merge mining
+//! operations across multiple quarries. Merge mining allows miners to participate
+//! in multiple quarries simultaneously, earning rewards from both primary and
+//! replica pools.
+//!
+//! ## Features
+//!
+//! - **Primary Miner Management**: Create and manage primary miners
+//! - **Replica Pool Support**: Add and manage replica mining pools
+//! - **Unified Staking**: Stake tokens across multiple quarries
+//! - **Reward Collection**: Claim rewards from all participating pools
+
 use anyhow::Result;
 use solana_sdk::pubkey::Pubkey;
 use testsvm::{AccountRef, TestSVM, anchor_instruction};
@@ -28,14 +44,14 @@ impl TestMergeMiner {
         let merge_pool = self.merge_miner.load(env)?.pool;
         // Get primary miner PDA
         let primary_miner = env.get_pda::<quarry_mine::accounts::Miner>(
-            &format!("{}_primary_miner", label),
+            &format!("{label}_primary_miner"),
             &[&"Miner", quarry, &self.merge_miner.key],
             crate::quarry_mine::ID,
         )?;
 
         // Create primary miner vault ATA
         let (create_miner_vault_ix, primary_miner_vault) = env.create_ata_ix(
-            &format!("{}_primary_miner_vault", label),
+            &format!("{label}_primary_miner_vault"),
             &primary_miner.into(),
             &primary_mint.into(),
         )?;
@@ -81,14 +97,14 @@ impl TestMergeMiner {
 
         // Get replica miner PDA
         let replica_miner = env.get_pda::<quarry_mine::accounts::Miner>(
-            &format!("{}_replica_miner", label),
+            &format!("{label}_replica_miner"),
             &[&"Miner", quarry, &self.merge_miner.key],
             crate::quarry_mine::ID,
         )?;
 
         // Create replica miner vault ATA
         let (create_miner_vault_ix, replica_miner_vault) = env.create_ata_ix(
-            &format!("{}_replica_miner_vault", label),
+            &format!("{label}_replica_miner_vault"),
             &replica_miner.into(),
             &replica_mint.into(),
         )?;

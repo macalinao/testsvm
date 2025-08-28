@@ -1,3 +1,7 @@
+//! # LiteSVM Helper Functions
+//!
+//! Utility functions for working directly with the LiteSVM testing framework.
+
 use anyhow::Result;
 use litesvm::LiteSVM;
 use solana_sdk::signature::{Keypair, Signer};

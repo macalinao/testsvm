@@ -1,3 +1,18 @@
+//! # PDA Seeds Management
+//!
+//! Utilities for working with Program Derived Addresses (PDAs) and their seeds.
+//!
+//! This module provides types and functions for creating, managing, and debugging
+//! PDAs in Solana programs. It includes a flexible seed system that can handle
+//! various data types and provides human-readable representations for debugging.
+//!
+//! ## Features
+//!
+//! - **Flexible Seed Types**: Support for strings, pubkeys, and raw bytes as seeds
+//! - **PDA Derivation**: Helper functions for finding PDAs with bumps
+//! - **Debug Support**: Human-readable seed representations for logging
+//! - **Verification**: Methods to verify PDA derivation correctness
+
 use anchor_lang::prelude::*;
 
 /// Result of PDA derivation containing all relevant information
@@ -239,7 +254,7 @@ mod tests {
         let program_id = Pubkey::new_unique();
         let seeds: Vec<&dyn SeedPart> = vec![];
 
-        let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
 
         // Empty seeds should still produce a valid PDA
         assert!(!pda.is_on_curve());
@@ -341,7 +356,7 @@ mod tests {
 
         // Check all fields are populated correctly
         assert!(!derived_pda.key.is_on_curve());
-        assert!(derived_pda.bump <= 255);
+        // bump is a u8 so it's always <= 255
         assert_eq!(derived_pda.seed_strings.len(), 3);
         assert_eq!(derived_pda.seeds.len(), 3);
 

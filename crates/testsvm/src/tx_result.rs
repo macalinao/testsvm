@@ -1,3 +1,20 @@
+//! # Transaction Result Management
+//!
+//! Enhanced transaction result handling with detailed error reporting and analysis.
+//!
+//! This module provides rich transaction result types that extend LiteSVM's basic
+//! transaction metadata with additional debugging capabilities, colored output,
+//! and assertion helpers. It makes it easy to understand why transactions failed
+//! and provides useful information for successful transactions.
+//!
+//! ## Features
+//!
+//! - **Detailed Error Information**: Comprehensive error context including logs and instruction errors
+//! - **Colored Output**: Enhanced readability with color-coded transaction logs
+//! - **Assertion Helpers**: Built-in methods for testing expected outcomes
+//! - **Address Resolution**: Automatic replacement of addresses with labels from the address book
+//! - **Anchor Error Support**: Special handling for Anchor framework error codes
+
 use std::error::Error;
 use std::fmt::Display;
 
@@ -29,6 +46,10 @@ pub struct TXErrorAssertions {
 }
 
 impl TXErrorAssertions {
+    /// Asserts that the transaction failed with a specific Anchor error.
+    ///
+    /// This uses string matching to find the error in the transaction logs, looking for
+    /// the last program log containing the string "AnchorError" and matching the error name.
     pub fn with_anchor_error(&self, error_name: &str) -> Result<()> {
         match self.error.metadata.err.clone() {
             solana_sdk::transaction::TransactionError::InstructionError(
@@ -44,7 +65,7 @@ impl TXErrorAssertions {
                     .rev()
                     .find(|line| line.contains("AnchorError"));
                 if let Some(error_message) = maybe_error_message {
-                    if error_message.contains(&format!("{}. Error Number:", error_name)) {
+                    if error_message.contains(&format!("{error_name}. Error Number:")) {
                         Ok(())
                     } else {
                         Err(anyhow!(
@@ -79,7 +100,7 @@ impl TXErrorAssertions {
                     .metadata
                     .meta
                     .pretty_logs()
-                    .contains(format!("{}. Error Number: {}", error_name, error_code).as_str())
+                    .contains(format!("{error_name}. Error Number: {error_code}").as_str())
                 {
                     Ok(())
                 } else {
@@ -96,6 +117,7 @@ impl TXErrorAssertions {
 }
 
 impl TXError {
+    /// Print the error details, formatted using an [AddressBook].
     pub fn print_error(&self, address_book: &AddressBook) {
         println!(
             "\n{} {}",
@@ -113,11 +135,6 @@ impl TXError {
             "{}",
             address_book.replace_addresses_in_text(&self.metadata.meta.pretty_logs())
         );
-        // for log in self.metadata.clone().meta.logs {
-        //     // Replace addresses in log messages
-        //     let formatted_log = address_book.replace_addresses_in_text(&log);
-        //     println!("   {}", formatted_log);
-        // }
 
         // Log each instruction for debugging
         println!(
@@ -176,13 +193,15 @@ impl TXError {
     }
 }
 
-pub type TXResult = Result<TransactionMetadata, TXError>;
+/// A result type that represents the result of a transaction.
+pub type TXResult = Result<TransactionMetadata, Box<TXError>>;
 
+/// Assertions for successful transactions.
 pub struct TXSuccessAssertions {
     pub metadata: TransactionMetadata,
 }
 
-pub trait TXResultHelpers {
+pub trait TXResultAssertions {
     /// Asserts that the transaction fails, converting a successful transaction to an error.
     ///
     /// This method is used in tests to verify that a transaction is expected to fail.
@@ -226,12 +245,12 @@ pub trait TXResultHelpers {
     fn succeeds(self) -> Result<TXSuccessAssertions>;
 }
 
-impl TXResultHelpers for TXResult {
+impl TXResultAssertions for TXResult {
     fn fails(self) -> Result<TXErrorAssertions> {
         let err = self
             .err()
             .ok_or(anyhow::anyhow!("Unexpected successful transaction"))?;
-        Ok(TXErrorAssertions { error: err })
+        Ok(TXErrorAssertions { error: *err })
     }
 
     fn succeeds(self) -> Result<TXSuccessAssertions> {

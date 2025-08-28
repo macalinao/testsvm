@@ -1,3 +1,17 @@
+//! # Quarry Program Setup
+//!
+//! Utilities for initializing Quarry protocol programs in test environments.
+//!
+//! This module provides functions to easily set up all required Quarry programs
+//! (mine, merge_mine, and mint_wrapper) in a TestSVM environment. These programs
+//! must be downloaded as `.so` files before they can be loaded into the test environment.
+//!
+//! ## Required Programs
+//!
+//! - **quarry_mine**: Core mining and rewards distribution
+//! - **quarry_merge_mine**: Merge mining functionality for multiple quarries
+//! - **quarry_mint_wrapper**: Wrapped token minting capabilities
+
 use anyhow::Result;
 use testsvm::TestSVM;
 

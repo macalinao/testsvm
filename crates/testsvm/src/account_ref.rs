@@ -1,3 +1,18 @@
+//! # Account References
+//!
+//! Type-safe account references for TestSVM with automatic deserialization support.
+//!
+//! This module provides the `AccountRef` type, which acts as a lightweight handle to
+//! on-chain accounts with built-in type safety and Anchor deserialization. It simplifies
+//! working with strongly-typed accounts in tests by providing convenient methods for
+//! loading and verifying account state.
+//!
+//! ## Key Features
+//!
+//! - **Type Safety**: Generic over Anchor account types for compile-time safety
+//! - **Loading**: Simple access to account state
+//! - **Address Book Integration**: Automatic labeling for better debugging
+
 use crate::TestSVM;
 use anchor_lang::Key;
 use anyhow::{Context, Result};

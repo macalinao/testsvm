@@ -21,16 +21,8 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Build
         run: cargo build --verbose
@@ -55,16 +47,8 @@ jobs:
         with:
           components: rustfmt
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Check
         run: cargo check --verbose
@@ -94,16 +78,8 @@ jobs:
         with:
           components: clippy
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Run clippy
         run: cargo clippy --all-targets --all-features -- -D warnings

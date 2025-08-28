@@ -1,7 +1,6 @@
 use crate::{TestRewarder, quarry_mine, tests::common::init_test_environment};
 use anyhow::Result;
-use solana_sdk::signature::Signer;
-use testsvm::TXResultHelpers;
+use testsvm::prelude::*;
 
 #[test]
 fn test_set_rewards_share_authority_check() -> Result<()> {
@@ -207,10 +206,10 @@ fn test_multiple_quarries_management() -> Result<()> {
     let mut quarries = Vec::new();
 
     for i in 0..num_quarries {
-        let token_mint = env.create_mint(&format!("token_{}", i), 6, &authority.pubkey())?;
+        let token_mint = env.create_mint(&format!("token_{i}"), 6, &authority.pubkey())?;
         let quarry = rewarder.create_quarry(
             &mut env,
-            &format!("quarry_{}", i),
+            &format!("quarry_{i}"),
             &token_mint.key,
             &authority,
         )?;
@@ -239,8 +238,7 @@ fn test_multiple_quarries_management() -> Result<()> {
         let quarry_data = quarry.fetch_quarry(&env)?;
         assert_eq!(
             quarry_data.rewards_share, share,
-            "Quarry {} should have share {}",
-            i, share
+            "Quarry {i} should have share {share}"
         );
     }
 
@@ -250,24 +248,9 @@ fn test_multiple_quarries_management() -> Result<()> {
         let expected_share = (i as u64 + 1) * 100;
         assert_eq!(
             quarry_data.rewards_share, expected_share,
-            "Quarry {} share should remain {}",
-            i, expected_share
+            "Quarry {i} share should remain {expected_share}"
         );
     }
 
     Ok(())
-}
-
-use solana_sdk::pubkey::Pubkey;
-
-fn anchor_instruction<T: anchor_lang::InstructionData + anchor_lang::Discriminator>(
-    program_id: Pubkey,
-    accounts: impl anchor_lang::ToAccountMetas,
-    data: T,
-) -> solana_sdk::instruction::Instruction {
-    solana_sdk::instruction::Instruction::new_with_bytes(
-        program_id,
-        &data.data(),
-        accounts.to_account_metas(None),
-    )
 }

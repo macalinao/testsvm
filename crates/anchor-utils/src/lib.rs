@@ -64,32 +64,6 @@ use solana_program::instruction::Instruction;
 ///     },
 /// );
 /// ```
-///
-/// # Working with Real Programs
-///
-/// Here's an example using the Quarry mining program:
-///
-/// ```rust,ignore
-/// use anchor_lang::prelude::*;
-/// use anchor_utils::anchor_instruction;
-///
-/// // Load the Quarry program IDL
-/// declare_program!(quarry_mine);
-///
-/// // Create a stake instruction
-/// let stake_ix = anchor_instruction(
-///     quarry_mine::ID,
-///     quarry_mine::accounts::UserStake {
-///         authority: user_authority,
-///         miner: miner_account,
-///         quarry: quarry_account,
-///         token_program: token::ID,
-///     },
-///     quarry_mine::instruction::UserStake {
-///         amount: 1_000_000,
-///     },
-/// );
-/// ```
 pub fn anchor_instruction(
     program_id: Pubkey,
     accounts: impl ToAccountMetas,

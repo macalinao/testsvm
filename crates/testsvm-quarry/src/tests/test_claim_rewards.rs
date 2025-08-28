@@ -1,7 +1,5 @@
-use anchor_lang::prelude::*;
 use anyhow::Result;
-use solana_sdk::signature::{Keypair, Signer};
-use testsvm::{AccountRef, TestSVM};
+use testsvm::prelude::*;
 
 use crate::quarry_mine;
 use crate::test_rewarder::TestRewarder;

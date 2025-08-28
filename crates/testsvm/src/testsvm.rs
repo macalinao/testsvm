@@ -1,3 +1,20 @@
+//! # TestSVM Implementation
+//!
+//! Core implementation of the TestSVM testing framework wrapper.
+//!
+//! This module contains the main `TestSVM` struct and its implementation, providing
+//! a comprehensive testing environment for Solana programs. It wraps LiteSVM with
+//! additional functionality for transaction management, account creation, token operations,
+//! and enhanced debugging capabilities.
+//!
+//! ## Architecture
+//!
+//! - **LiteSVM Wrapper**: Extends LiteSVM with developer-friendly APIs
+//! - **Default Fee Payer**: Automatic transaction fee management
+//! - **Address Book**: Integrated labeling system for all accounts
+//! - **Transaction Result**: Rich error reporting and transaction analysis
+//! - **Token Operations**: Built-in SPL Token program support
+
 use std::{
     env,
     path::{Path, PathBuf},
@@ -54,7 +71,7 @@ impl TestSVM {
                 };
                 tx_error.print_error(&self.address_book);
                 self.address_book.print_all();
-                Err(tx_error)
+                Err(Box::new(tx_error))
             }
         }
     }
@@ -89,7 +106,7 @@ impl TestSVM {
     /// Create a new funded wallet and add to address book
     pub fn new_wallet(&mut self, name: &str) -> Result<Keypair> {
         let keypair = new_funded_account(&mut self.svm, 10 * 1_000_000_000)?; // 10 SOL
-        let label = format!("wallet:{}", name);
+        let label = format!("wallet:{name}");
         self.address_book.add_wallet(keypair.pubkey(), label)?;
         Ok(keypair)
     }
@@ -129,7 +146,7 @@ impl TestSVM {
 
         // Add the mint to the address book
         let mint_pubkey = mint.pubkey();
-        let label = format!("mint:{}", name);
+        let label = format!("mint:{name}");
         self.address_book.add_mint(mint_pubkey, label)?;
 
         Ok(AccountRef::new(mint_pubkey))

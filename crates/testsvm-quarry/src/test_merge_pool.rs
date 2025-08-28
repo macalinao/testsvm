@@ -1,3 +1,19 @@
+//! # Merge Pool Testing Utilities
+//!
+//! Test helpers for Quarry merge pool management.
+//!
+//! This module provides the `TestMergePool` struct for creating and managing
+//! merge pools in the Quarry protocol. Merge pools enable multiple quarries
+//! to share rewards through a unified staking mechanism, where miners can
+//! earn from both primary and replica token pools.
+//!
+//! ## Features
+//!
+//! - **Pool Creation**: Initialize new merge pools with primary and replica mints
+//! - **Miner Management**: Create and manage merge miners within pools
+//! - **Token Operations**: Handle wrapped token minting and distribution
+//! - **Type Safety**: Strongly typed account references for all pool components
+
 use anchor_lang::{InstructionData, prelude::*};
 use anyhow::Result;
 use solana_sdk::instruction::Instruction;
@@ -22,14 +38,14 @@ impl TestMergePool {
     ) -> Result<Self> {
         // Calculate merge pool PDA
         let pool = env.get_pda::<quarry_merge_mine::accounts::MergePool>(
-            &format!("merge_pool[{}].pool", label),
+            &format!("merge_pool[{label}].pool"),
             &[&"MergePool", &primary_mint.key],
             quarry_merge_mine::ID,
         )?;
 
         // Calculate replica mint PDA
         let replica_mint = env.get_pda::<anchor_spl::token::Mint>(
-            &format!("merge_pool[{}].replica_mint", label),
+            &format!("merge_pool[{label}].replica_mint"),
             &[&"ReplicaMint", &pool.key],
             quarry_merge_mine::ID,
         )?;
@@ -69,21 +85,21 @@ impl TestMergePool {
     ) -> Result<TestMergeMiner> {
         // Calculate merge miner PDA
         let merge_miner = env.get_pda(
-            &format!("merge_miner[{}]", label),
+            &format!("merge_miner[{label}]"),
             &[&"MergeMiner", &self.pool.key, &owner],
             quarry_merge_mine::ID,
         )?;
 
         // Create merge miner primary token account ATA
         let (create_mm_primary_ata_ix, primary_tokens) = env.create_ata_ix(
-            &format!("merge_miner[{}].primary_tokens", label),
+            &format!("merge_miner[{label}].primary_tokens"),
             &merge_miner.into(),
             &self.primary_mint.into(),
         )?;
 
         // Create merge miner primary token account ATA
         let (create_mm_replica_ata_ix, replica_tokens) = env.create_ata_ix(
-            &format!("merge_miner[{}].replica_tokens", label),
+            &format!("merge_miner[{label}].replica_tokens"),
             &merge_miner.into(),
             &self.replica_mint.into(),
         )?;

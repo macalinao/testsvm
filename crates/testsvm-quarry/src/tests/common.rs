@@ -1,5 +1,5 @@
 use anyhow::Result;
-use testsvm::TestSVM;
+use testsvm::prelude::*;
 
 use crate::setup_quarry_programs;
 

@@ -1,3 +1,19 @@
+//! # Rewarder Testing Utilities
+//!
+//! Test helpers for Quarry rewarder management.
+//!
+//! This module provides the `TestRewarder` struct for managing reward distribution
+//! systems in the Quarry protocol. Rewarders control the minting and distribution
+//! of reward tokens to miners based on their staked amounts and the configured
+//! reward rates.
+//!
+//! ## Features
+//!
+//! - **Rewarder Creation**: Initialize new rewarders with mint wrappers
+//! - **Quarry Management**: Create and configure quarries under the rewarder
+//! - **Reward Configuration**: Set annual reward rates and distribution parameters
+//! - **Authority Control**: Manage rewarder authority and pause states
+
 use crate::{quarry_mine, quarry_mint_wrapper};
 use anchor_lang::prelude::*;
 use anyhow::{Context, Result};
@@ -23,12 +39,12 @@ impl TestRewarder {
     /// Create a new rewarder with the specified label and authority
     pub fn new_rewarder(env: &mut TestSVM, label: &str, authority: &Keypair) -> Result<Self> {
         let mint_wrapper_base =
-            env.new_wallet(&format!("rewarder[{}].mint_wrapper_base", label))?;
-        let rewarder_base = env.new_wallet(&format!("rewarder[{}].rewarder_base", label))?;
+            env.new_wallet(&format!("rewarder[{label}].mint_wrapper_base"))?;
+        let rewarder_base = env.new_wallet(&format!("rewarder[{label}].rewarder_base"))?;
 
         // Calculate mint wrapper PDA
         let (mint_wrapper, mint_wrapper_bump) = env.find_pda_with_bump(
-            &format!("rewarder[{}].mint_wrapper", label),
+            &format!("rewarder[{label}].mint_wrapper"),
             &[&"MintWrapper", &mint_wrapper_base.pubkey()],
             quarry_mint_wrapper::ID,
         )?;
@@ -36,7 +52,7 @@ impl TestRewarder {
         // Create reward token mint with mint wrapper as authority
         let reward_token_mint = env
             .create_mint(
-                &format!("rewarder[{}].reward_token", label),
+                &format!("rewarder[{label}].reward_token"),
                 6,
                 &mint_wrapper,
             )
@@ -63,14 +79,14 @@ impl TestRewarder {
 
         // Calculate rewarder PDA
         let rewarder = env.get_pda(
-            &format!("rewarder[{}].rewarder", label),
+            &format!("rewarder[{label}].rewarder"),
             &[&"Rewarder", &rewarder_base.pubkey()],
             quarry_mine::ID,
         )?;
 
         // Create claim fee token account for the rewarder
         let (create_ata_ix, claim_fee_token_account) = env.create_ata_ix(
-            &format!("rewarder[{}].claim_fee_tokens", label),
+            &format!("rewarder[{label}].claim_fee_tokens"),
             &rewarder.key,
             &reward_token_mint.key,
         )?;
@@ -97,7 +113,7 @@ impl TestRewarder {
 
         // Create and approve minter for the mint wrapper
         let minter = env.get_pda(
-            &format!("rewarder[{}].minter", label),
+            &format!("rewarder[{label}].minter"),
             &[&"MintWrapperMinter", &mint_wrapper, &rewarder],
             quarry_mint_wrapper::ID,
         )?;
@@ -158,7 +174,7 @@ impl TestRewarder {
 
         // Calculate quarry PDA
         let quarry = env.get_pda_key(
-            &format!("{}.quarry", quarry_label),
+            &format!("{quarry_label}.quarry"),
             &[&"Quarry", &self.rewarder.key, staked_token_mint],
             quarry_mine::ID,
         )?;

@@ -565,7 +565,7 @@ impl AddressBook {
                 AddressRole::Custom(role) => format!(
                     "{} {}",
                     label.bright_white().bold(),
-                    format!("[{}]", role).dimmed()
+                    format!("[{role}]").dimmed()
                 ),
             },
             None => format!("{}", pubkey.to_string().bright_red()),
@@ -682,13 +682,10 @@ impl AddressBook {
             );
             for (pubkey, label, _reg) in programs {
                 println!(
-                    "    {} {}",
+                    "    {} {:<30} {}",
                     "•".to_string().bright_blue(),
-                    format!(
-                        "{:<30} {}",
-                        label.bright_blue().bold(),
-                        pubkey.to_string().dimmed()
-                    )
+                    label.bright_blue().bold(),
+                    pubkey.to_string().dimmed()
                 );
             }
         }
@@ -701,13 +698,10 @@ impl AddressBook {
             );
             for (pubkey, label, _reg) in wallets {
                 println!(
-                    "    {} {}",
+                    "    {} {:<30} {}",
                     "•".to_string().bright_cyan(),
-                    format!(
-                        "{:<30} {}",
-                        label.bright_cyan().bold(),
-                        pubkey.to_string().dimmed()
-                    )
+                    label.bright_cyan().bold(),
+                    pubkey.to_string().dimmed()
                 );
             }
         }
@@ -720,13 +714,10 @@ impl AddressBook {
             );
             for (pubkey, label, _reg) in mints {
                 println!(
-                    "    {} {}",
+                    "    {} {:<30} {}",
                     "•".to_string().bright_green(),
-                    format!(
-                        "{:<30} {}",
-                        label.bright_green().bold(),
-                        pubkey.to_string().dimmed()
-                    )
+                    label.bright_green().bold(),
+                    pubkey.to_string().dimmed()
                 );
             }
         }
@@ -740,14 +731,11 @@ impl AddressBook {
             for (pubkey, label, reg) in pdas {
                 if let AddressRole::Pda { seeds, .. } = &reg.role {
                     println!(
-                        "    {} {}",
+                        "    {} {:<30} {} [{}]",
                         "•".to_string().bright_magenta(),
-                        format!(
-                            "{:<30} {} {}",
-                            label.to_string().bright_magenta().bold(),
-                            pubkey.to_string().dimmed(),
-                            format!("[{}]", seeds.join(",")).dimmed()
-                        )
+                        label.to_string().bright_magenta().bold(),
+                        pubkey.to_string().dimmed(),
+                        seeds.join(",").dimmed()
                     );
                 }
             }
@@ -761,13 +749,10 @@ impl AddressBook {
             );
             for (pubkey, label, _reg) in atas {
                 println!(
-                    "    {} {}",
+                    "    {} {:<30} {}",
                     "•".to_string().bright_yellow(),
-                    format!(
-                        "{:<30} {}",
-                        label.bright_yellow().bold(),
-                        pubkey.to_string().dimmed()
-                    )
+                    label.bright_yellow().bold(),
+                    pubkey.to_string().dimmed()
                 );
             }
         }
@@ -781,14 +766,11 @@ impl AddressBook {
             for (pubkey, label, reg) in custom {
                 if let AddressRole::Custom(role) = &reg.role {
                     println!(
-                        "    {} {}",
+                        "    {} {:<30} {} [{}]",
                         "•".to_string().bright_white(),
-                        format!(
-                            "{:<30} {} {}",
-                            label.bright_white().bold(),
-                            pubkey.to_string().dimmed(),
-                            format!("[{}]", role).dimmed()
-                        )
+                        label.bright_white().bold(),
+                        pubkey.to_string().dimmed(),
+                        role.dimmed()
                     );
                 }
             }

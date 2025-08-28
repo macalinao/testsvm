@@ -2,14 +2,16 @@
 TestSVM
 </h1>
 
-TestSVM is a blazing fast testing framework for Solana programs, written in Rust. Built on top of [LiteSVM](https://github.com/LiteSVM/litesvm), tests written using TestSVM are an order of magnitude faster than traditional `solana-test-validator` + JavaScript tests.
+### TestSVM is a blazing fast testing framework for Solana programs, written in Rust.
 
-Features include:
+TestSVM provides:
 
 - Account labeling and logging, so you can easily track what `Pubkey` maps to what account.
 - Assertions for transaction results: assert that a transaction fails with a specific error, or that it succeeds.
 - Nicely formatted transaction logs with account labeling, so you know what accounts have issues in a transaction.
 - Type-safe utilities for validating state and loading it from the SVM.
+
+Built on top of [LiteSVM](https://github.com/LiteSVM/litesvm), tests written using TestSVM are an order of magnitude faster than traditional `solana-test-validator` + JavaScript tests.
 
 **Note: this is a work in progress and is subject to change.**
 

@@ -1,3 +1,19 @@
+//! # Quarry Testing Utilities
+//!
+//! Test helpers for individual quarries in the Quarry protocol.
+//!
+//! This module provides the `TestQuarry` struct for managing individual quarry
+//! instances within the Quarry mining system. Each quarry represents a staking
+//! pool where users can deposit tokens to earn rewards based on their share of
+//! the total staked amount.
+//!
+//! ## Features
+//!
+//! - **Miner Creation**: Create and manage individual miners within a quarry
+//! - **Staking Operations**: Handle token deposits and withdrawals
+//! - **Reward Distribution**: Track and claim mining rewards
+//! - **Account Management**: Type-safe references to all quarry accounts
+
 use crate::{TestRewarder, quarry_mine, quarry_mint_wrapper};
 use anyhow::Result;
 use solana_sdk::pubkey::Pubkey;
@@ -31,14 +47,14 @@ impl TestQuarry {
         AccountRef<anchor_spl::token::TokenAccount>,
     )> {
         let miner = env.get_pda(
-            &format!("miner_{}", label),
+            &format!("miner_{label}"),
             &[b"Miner", &self.quarry.key.as_ref(), &user.pubkey().as_ref()],
             quarry_mine::ID,
         )?;
 
         // Create the miner vault ATA first
         let (create_vault_ix, miner_vault) = env.create_ata_ix(
-            &format!("miner_vault_{}", label),
+            &format!("miner_vault_{label}"),
             &miner.key,
             &self.staked_token_mint.key,
         )?;
