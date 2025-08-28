@@ -34,11 +34,8 @@ fn test_set_rewards_share_authority_check() -> Result<()> {
         quarry_mine::client::args::SetRewardsShare { new_share },
     );
 
-    let result = env.execute_ixs_with_signers(&[set_share_ix.clone()], &[&authority]);
-    assert!(
-        result.is_ok(),
-        "Authority should be able to set rewards share"
-    );
+    env.execute_ixs_with_signers(&[set_share_ix.clone()], &[&authority])
+        .succeeds()?;
 
     // Verify the share was updated
     let quarry_data = quarry.fetch_quarry(&env)?;
@@ -60,11 +57,8 @@ fn test_set_rewards_share_authority_check() -> Result<()> {
         quarry_mine::client::args::SetRewardsShare { new_share: 2000 },
     );
 
-    let result = env.execute_ixs_with_signers(&[unauthorized_ix], &[&unauthorized]);
-    assert!(
-        result.is_err(),
-        "Unauthorized user should not be able to set rewards share"
-    );
+    env.execute_ixs_with_signers(&[unauthorized_ix], &[&unauthorized])
+        .fails()?;
 
     // Verify share remains unchanged
     let quarry_data = quarry.fetch_quarry(&env)?;
@@ -89,11 +83,9 @@ fn test_set_annual_rewards_authority_check() -> Result<()> {
 
     // Test 1: Authority can set annual rewards
     let annual_rate = 1_000_000_000_000u64; // 1M tokens with 6 decimals
-    let result = rewarder.set_annual_rewards_rate(&mut env, annual_rate, &authority);
-    assert!(
-        result.is_ok(),
-        "Authority should be able to set annual rewards rate"
-    );
+    rewarder
+        .set_annual_rewards_rate(&mut env, annual_rate, &authority)
+        .succeeds()?;
 
     // Verify the rate was updated
     let rewarder_data = rewarder.fetch_rewarder(&env)?;
@@ -149,8 +141,8 @@ fn test_transfer_authority() -> Result<()> {
         },
     );
 
-    let result = env.execute_ixs_with_signers(&[transfer_ix], &[&original_authority]);
-    assert!(result.is_ok(), "Should be able to transfer authority");
+    env.execute_ixs_with_signers(&[transfer_ix], &[&original_authority])
+        .succeeds()?;
 
     // Verify authority was transferred
     let rewarder_data = rewarder.fetch_rewarder(&env)?;
@@ -170,8 +162,8 @@ fn test_transfer_authority() -> Result<()> {
         quarry_mine::client::args::AcceptAuthority {},
     );
 
-    let result = env.execute_ixs_with_signers(&[accept_ix], &[&new_authority]);
-    assert!(result.is_ok(), "New authority should be able to accept");
+    env.execute_ixs_with_signers(&[accept_ix], &[&new_authority])
+        .succeeds()?;
 
     // Verify new authority is active
     let rewarder_data = rewarder.fetch_rewarder(&env)?;
@@ -187,18 +179,15 @@ fn test_transfer_authority() -> Result<()> {
     );
 
     // Test that old authority can no longer make changes
-    let result = rewarder.set_annual_rewards_rate(&mut env, 5_000_000_000_000, &original_authority);
-    assert!(
-        result.is_err(),
-        "Original authority should no longer be able to make changes"
-    );
+    rewarder
+        .set_annual_rewards_rate(&mut env, 5_000_000_000_000, &original_authority)
+        .fails()?
+        .with_anchor_error("Unauthorized")?;
 
     // Test that new authority can make changes
-    let result = rewarder.set_annual_rewards_rate(&mut env, 5_000_000_000_000, &new_authority);
-    assert!(
-        result.is_ok(),
-        "New authority should be able to make changes"
-    );
+    rewarder
+        .set_annual_rewards_rate(&mut env, 5_000_000_000_000, &new_authority)
+        .succeeds()?;
 
     Ok(())
 }
