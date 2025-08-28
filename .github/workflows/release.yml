@@ -36,15 +36,16 @@ jobs:
       - name: Run tests
         run: cargo test --release --verbose
 
-      - name: Login to crates.io
-        run: cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
-
       - name: Dry run publish (check only)
         run: cargo workspaces publish --dry-run --yes --no-git-commit
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Publish to crates.io
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         run: cargo workspaces publish --yes --no-git-commit
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   create-release:
     name: Create GitHub Release
