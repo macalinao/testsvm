@@ -89,8 +89,10 @@ impl<T: anchor_lang::AccountDeserialize> AsRef<[u8]> for AccountRef<T> {
 #[cfg(test)]
 mod tests {
     use crate::AccountRef;
-    use address_book::pda_seeds::{SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings};
     use anchor_lang::prelude::*;
+    use solana_address_book::pda_seeds::{
+        SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings,
+    };
 
     // Dummy type for testing
     #[derive(Debug, Clone)]

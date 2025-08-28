@@ -32,7 +32,7 @@ There are two main crates that compose TestSVM:
 
 The following crates are used internally by TestSVM, but are not documented or intended for public use.
 
-- `address-book` - Keeps track of all the addresses used in the tests
+- `solana-address-book` - Keeps track of all the addresses used in the tests
 - `anchor-utils` - Lightweight utilities for interacting with programs that use Anchor.
 
 ## License

@@ -17,7 +17,7 @@
 //! ## Quick Start
 //!
 //! ```rust
-//! use address_book::{AddressBook, RegisteredAddress};
+//! use solana_address_book::{AddressBook, RegisteredAddress};
 //! use anchor_lang::prelude::*;
 //!
 //! // Create a new address book
@@ -43,7 +43,7 @@
 //! ### Managing Different Address Types
 //!
 //! ```rust
-//! use address_book::AddressBook;
+//! use solana_address_book::AddressBook;
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
@@ -80,7 +80,7 @@
 //! ### Finding and Querying Addresses
 //!
 //! ```rust
-//! use address_book::{AddressBook, AddressRole};
+//! use solana_address_book::{AddressBook, AddressRole};
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
@@ -109,7 +109,7 @@
 //! ### PDA Creation and Registration
 //!
 //! ```rust
-//! use address_book::{AddressBook, RegisteredAddress, SeedPart};
+//! use solana_address_book::{AddressBook, RegisteredAddress, SeedPart};
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
@@ -134,7 +134,7 @@
 //! ### Text Processing and Display
 //!
 //! ```rust
-//! use address_book::AddressBook;
+//! use solana_address_book::AddressBook;
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
@@ -155,7 +155,7 @@
 //! This crate is designed to work seamlessly with Solana testing frameworks:
 //!
 //! ```rust
-//! use address_book::AddressBook;
+//! use solana_address_book::AddressBook;
 //! use anchor_lang::prelude::*;
 //!
 //! fn setup_test_environment() -> AddressBook {

@@ -21,19 +21,10 @@
 pub use testsvm::prelude::*;
 
 // Quarry test helpers
-pub use crate::{
-    TestRewarder,
-    TestQuarry,
-    TestMergeMiner,
-    TestMergePool,
-};
+pub use crate::{TestMergeMiner, TestMergePool, TestQuarry, TestRewarder};
 
 // Setup functions
 pub use crate::setup_quarry_programs;
 
 // Quarry program types (generated from declare_program!)
-pub use crate::{
-    quarry_mine,
-    quarry_merge_mine,
-    quarry_mint_wrapper,
-};
+pub use crate::{quarry_merge_mine, quarry_mine, quarry_mint_wrapper};

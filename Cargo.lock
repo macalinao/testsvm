@@ -12,18 +12,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "address-book"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "anyhow",
- "colored",
- "hex",
- "strum",
-]
-
-[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2776,6 +2764,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-address-book"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "anyhow",
+ "colored",
+ "hex",
+ "strum",
+]
+
+[[package]]
 name = "solana-address-lookup-table-interface"
 version = "2.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5167,13 +5167,13 @@ dependencies = [
 name = "testsvm"
 version = "0.1.0"
 dependencies = [
- "address-book",
  "anchor-lang",
  "anchor-spl",
  "anchor-utils",
  "anyhow",
  "colored",
  "litesvm",
+ "solana-address-book",
  "solana-sdk",
  "strum",
 ]

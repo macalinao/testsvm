@@ -13,7 +13,7 @@ keywords = ["ian-macalinao", "solana", "svm", "testing", "blockchain"]
 categories = ["development-tools::testing", "blockchain", "simulation"]
 
 [dependencies]
-address-book = { path = "../address-book" }
+solana-address-book = { path = "../solana-address-book" }
 anchor-utils = { path = "../anchor-utils" }
 anyhow = "1.0"
 anchor-lang = "0.31.1"

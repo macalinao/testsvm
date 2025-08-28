@@ -171,8 +171,8 @@ pub mod prelude;
 pub mod testsvm;
 pub mod tx_result;
 
-pub use ::address_book::*;
 pub use ::anchor_utils::*;
+pub use ::solana_address_book::*;
 pub use account_ref::*;
 pub use litesvm_helpers::*;
 pub use testsvm::*;

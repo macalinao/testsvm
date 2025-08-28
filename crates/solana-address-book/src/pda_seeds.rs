@@ -81,7 +81,7 @@ pub fn seed_to_string(seed: &dyn SeedPart) -> String {
 /// # Example
 /// ```
 /// use anchor_lang::prelude::*;
-/// use address_book::pda_seeds::{find_pda_with_bump, SeedPart};
+/// use solana_address_book::pda_seeds::{find_pda_with_bump, SeedPart};
 ///
 /// let program_id = Pubkey::new_unique();
 /// let seeds: Vec<&dyn SeedPart> = vec![&"user", &"profile"];

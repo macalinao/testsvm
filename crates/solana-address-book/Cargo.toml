@@ -1,11 +1,11 @@
 [package]
-name = "address-book"
+name = "solana-address-book"
 version = "0.1.0"
 edition = "2024"
 description = "A library for managing and tracking Solana addresses used in transactions"
 license = "Apache-2.0"
 authors = ["Ian Macalinao <me@ianm.com>"]
-documentation = "https://docs.rs/address-book"
+documentation = "https://docs.rs/solana-address-book"
 homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
 readme = "README.md"

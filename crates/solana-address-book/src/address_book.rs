@@ -27,7 +27,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     ///
     /// let book = AddressBook::new();
     /// assert!(book.is_empty());
@@ -55,7 +55,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     ///
     /// let mut book = AddressBook::new();
     /// book.add_default_accounts().unwrap();
@@ -78,7 +78,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -111,7 +111,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::{AddressBook, RegisteredAddress};
+    /// use solana_address_book::{AddressBook, RegisteredAddress};
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -158,7 +158,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -183,7 +183,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -212,7 +212,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -244,7 +244,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -283,7 +283,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -324,7 +324,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -357,7 +357,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::{AddressBook, SeedPart};
+    /// use solana_address_book::{AddressBook, SeedPart};
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -400,7 +400,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -423,7 +423,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -448,7 +448,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::{AddressBook, AddressRole};
+    /// use solana_address_book::{AddressBook, AddressRole};
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -475,7 +475,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -522,7 +522,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -580,7 +580,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -628,7 +628,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -784,7 +784,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -807,7 +807,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -825,7 +825,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use address_book::AddressBook;
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();

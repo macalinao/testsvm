@@ -38,8 +38,7 @@ pub struct TestRewarder {
 impl TestRewarder {
     /// Create a new rewarder with the specified label and authority
     pub fn new_rewarder(env: &mut TestSVM, label: &str, authority: &Keypair) -> Result<Self> {
-        let mint_wrapper_base =
-            env.new_wallet(&format!("rewarder[{label}].mint_wrapper_base"))?;
+        let mint_wrapper_base = env.new_wallet(&format!("rewarder[{label}].mint_wrapper_base"))?;
         let rewarder_base = env.new_wallet(&format!("rewarder[{label}].rewarder_base"))?;
 
         // Calculate mint wrapper PDA
@@ -51,11 +50,7 @@ impl TestRewarder {
 
         // Create reward token mint with mint wrapper as authority
         let reward_token_mint = env
-            .create_mint(
-                &format!("rewarder[{label}].reward_token"),
-                6,
-                &mint_wrapper,
-            )
+            .create_mint(&format!("rewarder[{label}].reward_token"), 6, &mint_wrapper)
             .context("Failed to create reward token mint")?;
 
         let create_wrapper_ix = anchor_instruction(

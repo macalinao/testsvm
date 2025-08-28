@@ -54,7 +54,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::{RegisteredAddress, AddressRole};
+    /// use solana_address_book::{RegisteredAddress, AddressRole};
     ///
     /// let address = Pubkey::new_unique();
     /// let registered = RegisteredAddress::new(address, AddressRole::Wallet);
@@ -71,7 +71,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let wallet = Pubkey::new_unique();
     /// let registered = RegisteredAddress::wallet(wallet);
@@ -88,7 +88,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let mint = Pubkey::new_unique();
     /// let registered = RegisteredAddress::mint(mint);
@@ -107,7 +107,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let ata = Pubkey::new_unique();
     /// let mint = Pubkey::new_unique();
@@ -127,7 +127,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let address = Pubkey::new_unique();
     /// let registered = RegisteredAddress::custom(address, "governance");
@@ -144,7 +144,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let program = Pubkey::new_unique();
     /// let registered = RegisteredAddress::program(program);
@@ -168,7 +168,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::{RegisteredAddress, SeedPart};
+    /// use solana_address_book::{RegisteredAddress, SeedPart};
     ///
     /// let program_id = Pubkey::new_unique();
     /// let user = Pubkey::new_unique();
@@ -204,7 +204,7 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use address_book::RegisteredAddress;
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let pda = Pubkey::new_unique();
     /// let program_id = Pubkey::new_unique();

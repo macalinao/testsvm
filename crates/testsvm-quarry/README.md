@@ -74,12 +74,4 @@ This crate depends on:
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## Author
-
-Ian Macalinao <me@ianm.com>
-
-## Repository
-
-[https://github.com/macalinao/testsvm](https://github.com/macalinao/testsvm)
+Copyright (c) 2025 Ian Macalinao. Licensed under the Apache License, Version 2.0.
