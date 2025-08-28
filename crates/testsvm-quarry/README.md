@@ -1,5 +1,8 @@
 # testsvm-quarry
 
+[![Crates.io](https://img.shields.io/crates/v/testsvm-quarry.svg)](https://crates.io/crates/testsvm-quarry)
+[![Documentation](https://docs.rs/testsvm-quarry/badge.svg)](https://docs.rs/testsvm-quarry)
+
 Testing utilities for the Quarry protocol on Solana using the TestSVM framework.
 
 ## Overview

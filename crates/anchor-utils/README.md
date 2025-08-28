@@ -1,5 +1,8 @@
 # anchor-utils
 
+[![Crates.io](https://img.shields.io/crates/v/anchor-utils.svg)](https://crates.io/crates/anchor-utils)
+[![Documentation](https://docs.rs/anchor-utils/badge.svg)](https://docs.rs/anchor-utils)
+
 Utility functions for working with Anchor programs in Solana.
 
 ## Features

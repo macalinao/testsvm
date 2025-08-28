@@ -1,5 +1,8 @@
 # Address Book
 
+[![Crates.io](https://img.shields.io/crates/v/address-book.svg)](https://crates.io/crates/address-book)
+[![Documentation](https://docs.rs/address-book/badge.svg)](https://docs.rs/address-book)
+
 A Rust library for managing and tracking Solana addresses used in transactions. This crate provides a comprehensive address book system that helps with debugging and transaction analysis by maintaining labeled mappings of Solana public keys to their roles and purposes.
 
 ## Features
