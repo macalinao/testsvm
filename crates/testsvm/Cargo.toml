@@ -1,0 +1,16 @@
+[package]
+name = "testsvm"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[dependencies]
+address-book = { path = "../address-book" }
+anchor-utils = { path = "../anchor-utils" }
+anyhow = "1.0"
+anchor-lang = "0.31.1"
+anchor-spl = { version = "0.31.1", features = ["token"] }
+colored = "2.1"
+litesvm = "0.6.1"
+solana-sdk = "2.2.1"
+strum = { version = "0.26", features = ["derive"] }

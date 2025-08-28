@@ -1,0 +1,9 @@
+[package]
+name = "anchor-utils"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[dependencies]
+anchor-lang = "0.31.1"
+solana-program = "2"

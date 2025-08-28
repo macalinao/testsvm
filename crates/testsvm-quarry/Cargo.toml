@@ -1,0 +1,17 @@
+[package]
+name = "testsvm-quarry"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[dependencies]
+anyhow = "1.0"
+anchor-lang = "0.31.1"
+anchor-spl = { version = "0.31.1", features = ["token", "associated_token"] }
+colored = "2.0"
+litesvm = "0.6.1"
+solana-sdk = "2.2"
+solana-program = "2.2"
+testsvm = { path = "../testsvm" }
+
+[dev-dependencies]
