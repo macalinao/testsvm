@@ -13,8 +13,8 @@ keywords = ["ian-macalinao", "solana", "svm", "testing", "blockchain"]
 categories = ["development-tools::testing", "simulation"]
 
 [dependencies]
-solana-address-book = { path = "../solana-address-book" }
-anchor-utils = { path = "../anchor-utils" }
+solana-address-book = { version = "0.1.1", path = "../solana-address-book" }
+anchor-utils = { version = "0.1.0", path = "../anchor-utils" }
 anyhow = "1.0"
 anchor-lang = "0.31.1"
 anchor-spl = { version = "0.31.1", features = ["token"] }
