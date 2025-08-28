@@ -50,15 +50,17 @@ pub fn seed_to_string(seed: &dyn SeedPart) -> String {
 
     // Check if it's likely a string (all printable ASCII)
     if bytes.iter().all(|&b| b.is_ascii_graphic() || b == b' ')
-        && let Ok(s) = std::str::from_utf8(bytes) {
-            return s.to_string();
-        }
+        && let Ok(s) = std::str::from_utf8(bytes)
+    {
+        return s.to_string();
+    }
 
     // Check if it's a pubkey (32 bytes)
     if bytes.len() == 32
-        && let Ok(pubkey) = Pubkey::try_from(bytes) {
-            return pubkey.to_string();
-        }
+        && let Ok(pubkey) = Pubkey::try_from(bytes)
+    {
+        return pubkey.to_string();
+    }
 
     // Default to hex encoding for other byte arrays
     hex::encode(bytes)

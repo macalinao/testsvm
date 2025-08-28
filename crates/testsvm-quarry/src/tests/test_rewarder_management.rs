@@ -33,7 +33,7 @@ fn test_set_rewards_share_authority_check() -> Result<()> {
         quarry_mine::client::args::SetRewardsShare { new_share },
     );
 
-    env.execute_ixs_with_signers(&[set_share_ix.clone()], &[&authority])
+    env.execute_ixs_with_signers(&[set_share_ix], &[&authority])
         .succeeds()?;
 
     // Verify the share was updated
