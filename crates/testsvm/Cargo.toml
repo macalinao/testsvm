@@ -21,4 +21,4 @@ anchor-spl = { version = "0.31.1", features = ["token"] }
 colored = "2.1"
 litesvm = "0.6.1"
 solana-sdk = "2.2.1"
-strum = { version = "0.26", features = ["derive"] }
+strum = { version = "0.27", features = ["derive"] }
