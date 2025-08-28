@@ -10,7 +10,7 @@ homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
 readme = "README.md"
 keywords = ["ian-macalinao", "solana", "addresses", "tracking", "blockchain"]
-categories = ["development-tools", "blockchain", "data-structures"]
+categories = ["development-tools", "data-structures"]
 
 [dependencies]
 anchor-lang = "0.31.1"

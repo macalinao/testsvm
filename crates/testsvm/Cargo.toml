@@ -10,7 +10,7 @@ homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
 readme = "README.md"
 keywords = ["ian-macalinao", "solana", "svm", "testing", "blockchain"]
-categories = ["development-tools::testing", "blockchain", "simulation"]
+categories = ["development-tools::testing", "simulation"]
 
 [dependencies]
 solana-address-book = { path = "../solana-address-book" }
