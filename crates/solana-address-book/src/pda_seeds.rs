@@ -49,18 +49,16 @@ pub fn seed_to_string(seed: &dyn SeedPart) -> String {
     let bytes = seed.as_ref();
 
     // Check if it's likely a string (all printable ASCII)
-    if bytes.iter().all(|&b| b.is_ascii_graphic() || b == b' ') {
-        if let Ok(s) = std::str::from_utf8(bytes) {
+    if bytes.iter().all(|&b| b.is_ascii_graphic() || b == b' ')
+        && let Ok(s) = std::str::from_utf8(bytes) {
             return s.to_string();
         }
-    }
 
     // Check if it's a pubkey (32 bytes)
-    if bytes.len() == 32 {
-        if let Ok(pubkey) = Pubkey::try_from(bytes) {
+    if bytes.len() == 32
+        && let Ok(pubkey) = Pubkey::try_from(bytes) {
             return pubkey.to_string();
         }
-    }
 
     // Default to hex encoding for other byte arrays
     hex::encode(bytes)
