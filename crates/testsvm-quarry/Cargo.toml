@@ -3,6 +3,14 @@ name = "testsvm-quarry"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
+authors = ["Ian Macalinao <me@ianm.com>"]
+description = "Quarry protocol testing utilities for Solana SVM testing framework"
+documentation = "https://docs.rs/testsvm-quarry"
+homepage = "https://github.com/macalinao/testsvm"
+repository = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = ["ian-macalinao", "quarry", "solana", "testing", "blockchain"]
+categories = ["development-tools::testing", "blockchain", "cryptography::cryptocurrencies"]
 
 [dependencies]
 anyhow = "1.0"

@@ -3,6 +3,14 @@ name = "anchor-utils"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
+authors = ["Ian Macalinao <me@ianm.com>"]
+description = "Utility functions and helpers for Anchor framework development"
+documentation = "https://docs.rs/anchor-utils"
+homepage = "https://github.com/macalinao/testsvm"
+repository = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = ["ian-macalinao", "anchor", "solana", "utilities", "blockchain"]
+categories = ["development-tools", "blockchain", "cryptography::cryptocurrencies"]
 
 [dependencies]
 anchor-lang = "0.31.1"

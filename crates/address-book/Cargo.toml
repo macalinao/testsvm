@@ -4,7 +4,13 @@ version = "0.1.0"
 edition = "2024"
 description = "A library for managing and tracking Solana addresses used in transactions"
 license = "Apache-2.0"
+authors = ["Ian Macalinao <me@ianm.com>"]
+documentation = "https://docs.rs/address-book"
+homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = ["ian-macalinao", "solana", "addresses", "tracking", "blockchain"]
+categories = ["development-tools", "blockchain", "data-structures"]
 
 [dependencies]
 anchor-lang = "0.31.1"

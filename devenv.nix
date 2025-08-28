@@ -15,8 +15,6 @@
 
     # Required for LiteSVM tests
     openssl
-    pkg-config
+    # pkg-config
   ];
-
-  env.MACOSX_DEPLOYMENT_TARGET = "13.0";
 }

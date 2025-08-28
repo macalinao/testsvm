@@ -151,7 +151,31 @@ impl TestSVM {
         self.address_book.add_program(pubkey, label)
     }
 
-    /// Add a program fixture from the fixtures directory
+    /// Add a program fixture from the fixtures directory.
+    ///
+    /// This method loads a program binary from the fixtures directory. The fixture file
+    /// should be located at `fixtures/programs/{fixture_name}.so` relative to your project root.
+    ///
+    /// # Arguments
+    /// * `fixture_name` - The name of the fixture file (without the .so extension)
+    /// * `pubkey` - The public key to assign to the program
+    ///
+    /// # Example
+    /// ```
+    /// // This will load the file from fixtures/programs/my_program.so
+    /// env.add_program_fixture("my_program", program_id)?;
+    /// ```
+    ///
+    /// # File Structure
+    /// Your project should have the following structure:
+    /// ```
+    /// project_root/
+    /// ├── fixtures/
+    /// │   └── programs/
+    /// │       ├── my_program.so
+    /// │       └── other_program.so
+    /// └── src/
+    /// ```
     pub fn add_program_fixture(&mut self, fixture_name: &str, pubkey: Pubkey) -> Result<()> {
         let path = env::var("CARGO_MANIFEST_DIR")
             .map(PathBuf::from)
@@ -220,17 +244,6 @@ impl TestSVM {
     ) -> Result<Pubkey> {
         let (pubkey, _bump) = self.find_pda_with_bump(label, seeds, program_id)?;
         Ok(pubkey)
-    }
-
-    /// Deprecated: Use get_pda_key instead
-    #[deprecated(since = "0.1.0", note = "Use get_pda_key instead")]
-    pub fn find_pda(
-        &mut self,
-        label: &str,
-        seeds: &[&dyn SeedPart],
-        program_id: Pubkey,
-    ) -> Result<Pubkey> {
-        self.get_pda_key(label, seeds, program_id)
     }
 
     /// Find a PDA and return an AccountRef with proper type information

@@ -3,6 +3,14 @@ name = "testsvm"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
+authors = ["Ian Macalinao <me@ianm.com>"]
+description = "A comprehensive testing framework for Solana SVM (Solana Virtual Machine) programs"
+documentation = "https://docs.rs/testsvm"
+homepage = "https://github.com/macalinao/testsvm"
+repository = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = ["ian-macalinao", "solana", "svm", "testing", "blockchain"]
+categories = ["development-tools::testing", "blockchain", "simulation"]
 
 [dependencies]
 address-book = { path = "../address-book" }
