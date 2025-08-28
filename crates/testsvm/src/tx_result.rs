@@ -184,18 +184,18 @@ pub struct TXSuccessAssertions {
 
 pub trait TXResultHelpers {
     /// Asserts that the transaction fails, converting a successful transaction to an error.
-    /// 
+    ///
     /// This method is used in tests to verify that a transaction is expected to fail.
     /// It returns a `TXErrorAssertions` struct that provides additional assertion methods
     /// for checking specific error conditions.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// Returns `Ok(TXErrorAssertions)` if the transaction failed as expected, or an error
     /// if the transaction unexpectedly succeeded.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```ignore
     /// // Test that an unauthorized user cannot perform an action
     /// rewarder
@@ -206,18 +206,18 @@ pub trait TXResultHelpers {
     fn fails(self) -> Result<TXErrorAssertions>;
 
     /// Asserts that the transaction succeeds, converting a failed transaction to an error.
-    /// 
+    ///
     /// This method is used in tests to verify that a transaction is expected to succeed.
     /// It returns a `TXSuccessAssertions` struct that contains the successful transaction
     /// metadata for further validation if needed.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// Returns `Ok(TXSuccessAssertions)` if the transaction succeeded as expected, or an error
     /// if the transaction unexpectedly failed.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```ignore
     /// // Test that an authorized user can perform an action
     /// env.execute_ixs_with_signers(&[accept_ix], &[&new_authority])

@@ -2,11 +2,13 @@ pub mod pda_seeds;
 
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_program;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use colored::*;
 use std::collections::{HashMap, HashSet};
 
-pub use pda_seeds::{SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings, DerivedPda, seed_to_string};
+pub use pda_seeds::{
+    DerivedPda, SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings, seed_to_string,
+};
 
 /// Role type for registered addresses
 #[derive(Debug, Clone, strum::Display, Hash, PartialEq, Eq)]
@@ -255,7 +257,13 @@ impl AddressBook {
         let derived_pda = find_pda_with_bump_and_strings(seeds, &program_id);
 
         // Add to address book
-        self.add_pda(derived_pda.key, label.to_string(), derived_pda.seed_strings, program_id, derived_pda.bump)?;
+        self.add_pda(
+            derived_pda.key,
+            label.to_string(),
+            derived_pda.seed_strings,
+            program_id,
+            derived_pda.bump,
+        )?;
 
         Ok((derived_pda.key, derived_pda.bump))
     }
@@ -575,9 +583,9 @@ mod tests {
     fn test_add_wallet() {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
-        
+
         book.add_wallet(pubkey, "test_wallet".to_string()).unwrap();
-        
+
         assert_eq!(book.len(), 1);
         assert!(book.contains(&pubkey));
         assert_eq!(book.get_label(&pubkey), "test_wallet");
@@ -587,9 +595,9 @@ mod tests {
     fn test_add_mint() {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
-        
+
         book.add_mint(pubkey, "test_mint".to_string()).unwrap();
-        
+
         let registered = book.get_first(&pubkey).unwrap();
         assert_eq!(registered.label, "test_mint");
         matches!(registered.role, AddressRole::Mint);
@@ -601,14 +609,15 @@ mod tests {
         let ata_pubkey = Pubkey::new_unique();
         let mint_pubkey = Pubkey::new_unique();
         let owner_pubkey = Pubkey::new_unique();
-        
+
         book.add_ata(
             ata_pubkey,
             "test_ata".to_string(),
             mint_pubkey,
             owner_pubkey,
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         let registered = book.get_first(&ata_pubkey).unwrap();
         assert_eq!(registered.label, "test_ata");
         if let AddressRole::Ata { mint, owner } = &registered.role {
@@ -623,9 +632,9 @@ mod tests {
     fn test_add_program() {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
-        
+
         book.add_program(pubkey, "test_program").unwrap();
-        
+
         let registered = book.get_first(&pubkey).unwrap();
         assert_eq!(registered.label, "test_program");
         matches!(registered.role, AddressRole::Program);
@@ -635,13 +644,14 @@ mod tests {
     fn test_add_custom() {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
-        
+
         book.add_custom(
             pubkey,
             "test_custom".to_string(),
             "special_role".to_string(),
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         let registered = book.get_first(&pubkey).unwrap();
         assert_eq!(registered.label, "test_custom");
         if let AddressRole::Custom(role) = &registered.role {
@@ -656,9 +666,9 @@ mod tests {
         let mut book = AddressBook::new();
         let pubkey1 = Pubkey::new_unique();
         let pubkey2 = Pubkey::new_unique();
-        
+
         book.add_wallet(pubkey1, "duplicate".to_string()).unwrap();
-        
+
         let result = book.add_wallet(pubkey2, "duplicate".to_string());
         assert!(result.is_err());
         assert!(result.unwrap_err().to_string().contains("already exists"));
@@ -668,12 +678,12 @@ mod tests {
     fn test_get_by_role() {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
-        
+
         book.add_wallet(pubkey, "test_wallet".to_string()).unwrap();
-        
+
         let found = book.get_by_role(&AddressRole::Wallet);
         assert_eq!(found, Some(pubkey));
-        
+
         let not_found = book.get_by_role(&AddressRole::Mint);
         assert_eq!(not_found, None);
     }
@@ -684,16 +694,16 @@ mod tests {
         let wallet1 = Pubkey::new_unique();
         let wallet2 = Pubkey::new_unique();
         let mint = Pubkey::new_unique();
-        
+
         book.add_wallet(wallet1, "wallet1".to_string()).unwrap();
         book.add_wallet(wallet2, "wallet2".to_string()).unwrap();
         book.add_mint(mint, "mint1".to_string()).unwrap();
-        
+
         let wallets = book.get_all_by_role_type("wallet");
         assert_eq!(wallets.len(), 2);
         assert!(wallets.contains(&wallet1));
         assert!(wallets.contains(&wallet2));
-        
+
         let mints = book.get_all_by_role_type("mint");
         assert_eq!(mints.len(), 1);
         assert!(mints.contains(&mint));
@@ -703,11 +713,16 @@ mod tests {
     fn test_pda_creation() {
         let program_id = Pubkey::new_unique();
         let seeds = vec!["test", "seed"];
-        
+
         let (_pubkey, bump, registered) = RegisteredAddress::pda("test_pda", &seeds, &program_id);
-        
+
         assert_eq!(registered.label, "test_pda");
-        if let AddressRole::Pda { seeds: pda_seeds, program_id: pda_program_id, bump: pda_bump } = &registered.role {
+        if let AddressRole::Pda {
+            seeds: pda_seeds,
+            program_id: pda_program_id,
+            bump: pda_bump,
+        } = &registered.role
+        {
             assert_eq!(pda_seeds, &vec!["test".to_string(), "seed".to_string()]);
             assert_eq!(*pda_program_id, program_id);
             assert_eq!(*pda_bump, bump);
@@ -721,13 +736,13 @@ mod tests {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
         let unknown_pubkey = Pubkey::new_unique();
-        
+
         book.add_wallet(pubkey, "test_wallet".to_string()).unwrap();
-        
+
         let formatted = book.format_address(&pubkey);
         assert!(formatted.contains("test_wallet"));
-        
+
         let unknown_formatted = book.format_address(&unknown_pubkey);
-        assert_eq!(unknown_formatted.contains(&unknown_pubkey.to_string()), true);
+        assert!(unknown_formatted.contains(&unknown_pubkey.to_string()));
     }
 }

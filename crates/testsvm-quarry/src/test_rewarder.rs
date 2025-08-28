@@ -262,4 +262,56 @@ impl TestRewarder {
         );
         env.execute_ixs_with_signers(&[set_rewards_ix], &[authority])
     }
+
+    /// Create a new minter to allow minting
+    pub fn new_minter(
+        &self,
+        env: &mut TestSVM,
+        label: &str,
+        authority: &Keypair,
+    ) -> Result<TXResult> {
+        // Calculate the minter PDA but don't add to address book yet
+        let (minter, minter_bump) = Pubkey::find_program_address(
+            &[
+                b"MintWrapperMinter",
+                self.mint_wrapper.key.as_ref(),
+                self.rewarder.key.as_ref(),
+            ],
+            &quarry_mint_wrapper::ID,
+        );
+
+        let new_minter_ix = anchor_instruction(
+            quarry_mint_wrapper::ID,
+            quarry_mint_wrapper::client::accounts::NewMinter {
+                new_minter_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
+                    mint_wrapper: self.mint_wrapper.key,
+                    admin: authority.pubkey(),
+                },
+                new_minter_authority: self.rewarder.key,
+                minter,
+                payer: env.default_fee_payer(),
+                system_program: solana_sdk::system_program::ID,
+            },
+            quarry_mint_wrapper::client::args::NewMinter { bump: minter_bump },
+        );
+
+        let result = env.execute_ixs_with_signers(&[new_minter_ix], &[authority]);
+
+        // Add the minter to address book after creation
+        if result.is_ok() {
+            env.address_book.add_pda(
+                minter,
+                format!("rewarder[{}].minter[{}]", self.label, label),
+                vec![
+                    "MintWrapperMinter".to_string(),
+                    self.mint_wrapper.key.to_string(),
+                    self.rewarder.key.to_string(),
+                ],
+                quarry_mint_wrapper::ID,
+                minter_bump,
+            )?;
+        }
+
+        Ok(result)
+    }
 }

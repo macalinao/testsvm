@@ -18,4 +18,3 @@ pub fn new_funded_account(svm: &mut LiteSVM, lamports: u64) -> Result<Keypair> {
 
     Ok(keypair)
 }
-

@@ -2,11 +2,7 @@
 TestSVM
 </h1>
 
-<p align="center">
-Robust testing framework for Solana programs, written in Rust.
-</p>
-
-TestSVM is a testing framework for Solana programs, written in Rust. Built on top of [LiteSVM](https://github.com/LiteSVM/litesvm), it is an order of magnitude faster than traditional `solana-test-validator` + JavaScript tests.
+TestSVM is a blazing fast testing framework for Solana programs, written in Rust. Built on top of [LiteSVM](https://github.com/LiteSVM/litesvm), tests written using TestSVM are an order of magnitude faster than traditional `solana-test-validator` + JavaScript tests.
 
 Features include:
 

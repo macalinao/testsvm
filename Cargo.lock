@@ -5185,7 +5185,6 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "anyhow",
- "colored",
  "litesvm",
  "solana-program",
  "solana-sdk",

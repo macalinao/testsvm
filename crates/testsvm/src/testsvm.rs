@@ -161,14 +161,14 @@ impl TestSVM {
     /// * `pubkey` - The public key to assign to the program
     ///
     /// # Example
-    /// ```
+    /// ```ignore
     /// // This will load the file from fixtures/programs/my_program.so
     /// env.add_program_fixture("my_program", program_id)?;
     /// ```
     ///
     /// # File Structure
     /// Your project should have the following structure:
-    /// ```
+    /// ```text
     /// project_root/
     /// ├── fixtures/
     /// │   └── programs/

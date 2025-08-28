@@ -349,7 +349,7 @@ mod tests {
         assert_eq!(derived_pda.seed_strings[0], "config");
         assert_eq!(derived_pda.seed_strings[1], pubkey_seed.to_string());
         // Byte arrays are hex encoded
-        assert_eq!(derived_pda.seed_strings[2], hex::encode(&byte_seed_bytes));
+        assert_eq!(derived_pda.seed_strings[2], hex::encode(byte_seed_bytes));
 
         // Check raw seeds match inputs
         assert_eq!(derived_pda.seeds[0], string_seed.as_bytes());
