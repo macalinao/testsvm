@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/macalinao/testsvm/compare/testsvm-quarry-v0.1.0...testsvm-quarry-v0.1.1) - 2025-08-29
+
+### Other
+
+- updated the following local packages: testsvm
+
 ## [0.1.0](https://github.com/macalinao/testsvm/releases/tag/testsvm-quarry-v0.1.0) - 2025-08-28
 
 ### Fixed
