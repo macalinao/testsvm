@@ -178,9 +178,17 @@ impl TestSVM {
     /// * `pubkey` - The public key to assign to the program
     ///
     /// # Example
-    /// ```ignore
+    /// ```rust,no_run
+    /// # use testsvm::TestSVM;
+    /// # use solana_sdk::pubkey::Pubkey;
+    /// # use anyhow::Result;
+    /// # fn main() -> Result<()> {
+    /// # let mut env = TestSVM::init()?;
+    /// # let program_id = Pubkey::new_unique();
     /// // This will load the file from fixtures/programs/my_program.so
     /// env.add_program_fixture("my_program", program_id)?;
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// # File Structure

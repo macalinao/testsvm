@@ -18,13 +18,16 @@
 use std::error::Error;
 use std::fmt::Display;
 
-use anyhow::*;
 use colored::Colorize;
 use litesvm::types::{FailedTransactionMetadata, TransactionMetadata};
-use solana_sdk::{instruction::InstructionError, transaction::Transaction};
+use solana_sdk::transaction::Transaction;
 
 use crate::AddressBook;
 
+/// Error type representing a failed transaction with detailed metadata.
+///
+/// Contains both the original transaction and the failure metadata from LiteSVM,
+/// allowing for comprehensive error analysis and debugging.
 #[derive(Debug)]
 pub struct TXError {
     /// The transaction that failed
@@ -38,81 +41,6 @@ impl Error for TXError {}
 impl Display for TXError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Transaction failed: {}", self.metadata.err)
-    }
-}
-
-pub struct TXErrorAssertions {
-    error: TXError,
-}
-
-impl TXErrorAssertions {
-    /// Asserts that the transaction failed with a specific Anchor error.
-    ///
-    /// This uses string matching to find the error in the transaction logs, looking for
-    /// the last program log containing the string "AnchorError" and matching the error name.
-    pub fn with_anchor_error(&self, error_name: &str) -> Result<()> {
-        match self.error.metadata.err.clone() {
-            solana_sdk::transaction::TransactionError::InstructionError(
-                _,
-                InstructionError::Custom(_error_code),
-            ) => {
-                let maybe_error_message = self
-                    .error
-                    .metadata
-                    .meta
-                    .logs
-                    .iter()
-                    .rev()
-                    .find(|line| line.contains("AnchorError"));
-                if let Some(error_message) = maybe_error_message {
-                    if error_message.contains(&format!("{error_name}. Error Number:")) {
-                        Ok(())
-                    } else {
-                        Err(anyhow!(
-                            "Expected Anchor error '{}', got '{}'",
-                            error_name,
-                            error_message
-                        ))
-                    }
-                } else {
-                    Err(anyhow!(
-                        "Expected Anchor error '{}', but nothing was found in the logs",
-                        error_name
-                    ))
-                }
-            }
-            _ => Err(anyhow!(
-                "Expected error containing '{}', but got '{}'",
-                error_name,
-                self.error.metadata.err.to_string()
-            )),
-        }
-    }
-
-    pub fn with_error(&self, error_name: &str) -> Result<()> {
-        match self.error.metadata.err.clone() {
-            solana_sdk::transaction::TransactionError::InstructionError(
-                _,
-                InstructionError::Custom(error_code),
-            ) => {
-                if self
-                    .error
-                    .metadata
-                    .meta
-                    .pretty_logs()
-                    .contains(format!("{error_name}. Error Number: {error_code}").as_str())
-                {
-                    Ok(())
-                } else {
-                    Err(anyhow!("Expected error '{}'", error_name))
-                }
-            }
-            _ => Err(anyhow!(
-                "Expected error containing '{}', but got '{}'",
-                error_name,
-                self.error.metadata.err.to_string()
-            )),
-        }
     }
 }
 
@@ -195,66 +123,3 @@ impl TXError {
 
 /// A result type that represents the result of a transaction.
 pub type TXResult = Result<TransactionMetadata, Box<TXError>>;
-
-/// Assertions for successful transactions.
-pub struct TXSuccessAssertions {
-    pub metadata: TransactionMetadata,
-}
-
-pub trait TXResultAssertions {
-    /// Asserts that the transaction fails, converting a successful transaction to an error.
-    ///
-    /// This method is used in tests to verify that a transaction is expected to fail.
-    /// It returns a `TXErrorAssertions` struct that provides additional assertion methods
-    /// for checking specific error conditions.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(TXErrorAssertions)` if the transaction failed as expected, or an error
-    /// if the transaction unexpectedly succeeded.
-    ///
-    /// # Example
-    ///
-    /// ```ignore
-    /// // Test that an unauthorized user cannot perform an action
-    /// rewarder
-    ///     .set_annual_rewards_rate(&mut env, 1_000_000, &unauthorized_user)
-    ///     .fails()?  // Assert the transaction fails
-    ///     .with_anchor_error("Unauthorized")?;  // Assert it fails with specific error
-    /// ```
-    fn fails(self) -> Result<TXErrorAssertions>;
-
-    /// Asserts that the transaction succeeds, converting a failed transaction to an error.
-    ///
-    /// This method is used in tests to verify that a transaction is expected to succeed.
-    /// It returns a `TXSuccessAssertions` struct that contains the successful transaction
-    /// metadata for further validation if needed.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(TXSuccessAssertions)` if the transaction succeeded as expected, or an error
-    /// if the transaction unexpectedly failed.
-    ///
-    /// # Example
-    ///
-    /// ```ignore
-    /// // Test that an authorized user can perform an action
-    /// env.execute_ixs_with_signers(&[accept_ix], &[&new_authority])
-    ///     .succeeds()?;  // Assert the transaction succeeds
-    /// ```
-    fn succeeds(self) -> Result<TXSuccessAssertions>;
-}
-
-impl TXResultAssertions for TXResult {
-    fn fails(self) -> Result<TXErrorAssertions> {
-        let err = self
-            .err()
-            .ok_or(anyhow::anyhow!("Unexpected successful transaction"))?;
-        Ok(TXErrorAssertions { error: *err })
-    }
-
-    fn succeeds(self) -> Result<TXSuccessAssertions> {
-        let metadata = self?;
-        Ok(TXSuccessAssertions { metadata })
-    }
-}
