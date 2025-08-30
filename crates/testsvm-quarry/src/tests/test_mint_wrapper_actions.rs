@@ -424,15 +424,3 @@ fn test_perform_mint_incorrect_authority() -> Result<()> {
 
     Ok(())
 }
-
-fn anchor_instruction<T: anchor_lang::InstructionData + anchor_lang::Discriminator>(
-    program_id: Pubkey,
-    accounts: impl anchor_lang::ToAccountMetas,
-    data: T,
-) -> solana_sdk::instruction::Instruction {
-    solana_sdk::instruction::Instruction::new_with_bytes(
-        program_id,
-        &data.data(),
-        accounts.to_account_metas(None),
-    )
-}

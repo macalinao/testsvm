@@ -7,13 +7,10 @@
 //! and performing token operations.
 
 use anchor_spl::token;
-use anyhow::*;
-use solana_address_book::RegisteredAddress;
-use solana_sdk::{
-    pubkey::Pubkey,
-    signature::{Keypair, Signer},
-};
-use testsvm_core::{AccountRef, TestSVM};
+use anyhow::{anyhow, Context, Result};
+use testsvm_core::prelude::*;
+
+pub mod prelude;
 
 /// SPL Token helper functions for TestSVM
 pub trait TestSVMSPLHelpers {
@@ -28,9 +25,8 @@ pub trait TestSVMSPLHelpers {
     /// # Example
     ///
     /// ```
-    /// use testsvm_core::TestSVM;
+    /// use testsvm_core::prelude::*;
     /// use testsvm_spl::TestSVMSPLHelpers;
-    /// use solana_sdk::signature::{Keypair, Signer};
     ///
     /// # fn main() -> anyhow::Result<()> {
     /// let mut svm = TestSVM::init()?;
@@ -55,9 +51,8 @@ pub trait TestSVMSPLHelpers {
     /// # Example - Minting tokens
     ///
     /// ```
-    /// use testsvm_core::TestSVM;
+    /// use testsvm_core::prelude::*;
     /// use testsvm_spl::TestSVMSPLHelpers;
-    /// use solana_sdk::signature::{Keypair, Signer};
     /// use anchor_spl::token;
     ///
     /// # fn main() -> anyhow::Result<()> {
@@ -119,9 +114,8 @@ pub trait TestSVMSPLHelpers {
     /// # Example
     ///
     /// ```
-    /// use testsvm_core::TestSVM;
+    /// use testsvm_core::prelude::*;
     /// use testsvm_spl::TestSVMSPLHelpers;
-    /// use solana_sdk::signature::{Keypair, Signer};
     ///
     /// # fn main() -> anyhow::Result<()> {
     /// let mut svm = TestSVM::init()?;

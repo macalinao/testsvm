@@ -15,27 +15,6 @@ pub use crate::{
     TestSVM,
 };
 
-// SPL helpers
 pub use crate::TestSVMSPLHelpers;
-
-// Address book exports
-pub use crate::{AddressBook, AddressRole, RegisteredAddress};
-
-// PDA utilities
-pub use crate::DerivedPda;
-
-// Helper functions
-pub use crate::anchor_instruction;
-
-// Re-export commonly used Solana SDK types
-pub use solana_sdk::{
-    instruction::Instruction,
-    pubkey::Pubkey,
-    signature::{Keypair, Signer},
-    system_program, sysvar,
-    transaction::Transaction,
-};
-
-// Re-export Anchor types that are commonly used
-pub use anchor_lang::{InstructionData, Key, ToAccountMetas, prelude::*};
 pub use anchor_spl;
+pub use testsvm_core::prelude::*;

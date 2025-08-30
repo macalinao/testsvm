@@ -31,6 +31,8 @@ pub use account_ref::AccountRef;
 mod litesvm_helpers;
 use litesvm_helpers::new_funded_account;
 
+pub mod prelude;
+
 /// Test SVM wrapper for LiteSVM with payer management and Anchor helpers
 pub struct TestSVM {
     /// Underlying LiteSVM instance

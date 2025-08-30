@@ -18,4 +18,5 @@ litesvm = "0.6"
 solana-sdk = "2.2"
 solana-address-book = { path = "../solana-address-book", version = "0.1.1" }
 anchor-lang = "0.31"
+anchor-utils = { path = "../anchor-utils", version = "0.1.0" }
 colored = "3"
