@@ -232,14 +232,11 @@
 //! # }
 //! ```
 
-pub mod assertions;
 pub mod prelude;
 
 // Re-export from other crates
 pub use ::anchor_utils::*;
 pub use ::solana_address_book::*;
+pub use testsvm_assertions::*;
 pub use testsvm_core::*;
 pub use testsvm_spl::*;
-
-// Re-export local modules
-pub use assertions::*;

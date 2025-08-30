@@ -5174,8 +5174,19 @@ dependencies = [
  "solana-address-book",
  "solana-sdk",
  "strum",
+ "testsvm-assertions",
  "testsvm-core",
  "testsvm-spl",
+]
+
+[[package]]
+name = "testsvm-assertions"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "litesvm",
+ "solana-sdk",
+ "testsvm-core",
 ]
 
 [[package]]

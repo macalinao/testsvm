@@ -17,7 +17,7 @@ use anyhow::*;
 use litesvm::types::TransactionMetadata;
 use solana_sdk::instruction::InstructionError;
 
-use crate::{TXError, TXResult};
+use testsvm_core::{TXError, TXResult};
 
 /// Provides assertion methods for failed transactions.
 ///

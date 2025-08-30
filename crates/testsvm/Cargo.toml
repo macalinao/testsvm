@@ -15,6 +15,7 @@ categories = ["development-tools::testing", "simulation"]
 [dependencies]
 solana-address-book = { version = "0.1.1", path = "../solana-address-book" }
 anchor-utils = { version = "0.1.0", path = "../anchor-utils" }
+testsvm-assertions = { version = "0.1.0", path = "../testsvm-assertions" }
 testsvm-core = { version = "0.1.1", path = "../testsvm-core" }
 testsvm-spl = { version = "0.1.0", path = "../testsvm-spl" }
 anyhow = "1.0"
