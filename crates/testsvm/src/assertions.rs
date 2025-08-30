@@ -172,7 +172,7 @@ pub trait TXResultAssertions {
     /// # Example
     ///
     /// ```rust
-    /// # use testsvm::{TestSVM, TXResultAssertions};
+    /// # use testsvm::{TestSVM, TXResultAssertions, TestSVMSPLHelpers};
     /// # use solana_sdk::signature::Signer;
     /// # use anyhow::Result;
     /// # fn main() -> Result<()> {
@@ -222,7 +222,7 @@ pub trait TXResultAssertions {
     /// # Example
     ///
     /// ```rust
-    /// # use testsvm::{TestSVM, TXResultAssertions};
+    /// # use testsvm::{TestSVM, TXResultAssertions, TestSVMSPLHelpers};
     /// # use solana_sdk::signature::Signer;
     /// # use anyhow::Result;
     /// # fn main() -> Result<()> {

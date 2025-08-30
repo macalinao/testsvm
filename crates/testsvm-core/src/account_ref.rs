@@ -90,9 +90,7 @@ impl<T: anchor_lang::AccountDeserialize> AsRef<[u8]> for AccountRef<T> {
 mod tests {
     use crate::AccountRef;
     use anchor_lang::prelude::*;
-    use solana_address_book::pda_seeds::{
-        SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings,
-    };
+    use solana_address_book::pda_seeds::find_pda_with_bump_and_strings;
 
     // Dummy type for testing
     #[derive(Debug, Clone)]
@@ -123,9 +121,8 @@ mod tests {
         let account_ref: AccountRef<DummyAccount> = AccountRef::new(account_pubkey);
 
         // Test that AccountRef can be used as a seed
-        let seeds: Vec<&dyn SeedPart> = vec![&"prefix", &account_ref];
-
-        let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, bump) =
+            Pubkey::find_program_address(&[b"prefix", account_ref.key.as_ref()], &program_id);
 
         // Verify it matches manual calculation
         let (expected_pda, expected_bump) =
@@ -135,7 +132,8 @@ mod tests {
         assert_eq!(bump, expected_bump);
 
         // Test with find_pda_with_bump_and_strings
-        let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
+        let derived_pda =
+            find_pda_with_bump_and_strings(&[b"prefix", account_ref.as_ref()], &program_id);
 
         assert_eq!(derived_pda.key, expected_pda);
         assert_eq!(derived_pda.bump, expected_bump);
@@ -158,10 +156,15 @@ mod tests {
         let nonce_bytes = nonce.to_le_bytes();
 
         // Use multiple AccountRefs in PDA derivation
-        let seeds: Vec<&dyn SeedPart> =
-            vec![&"vault", &vault_account, &owner_account, &nonce_bytes];
-
-        let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
+        let derived_pda = find_pda_with_bump_and_strings(
+            &[
+                b"vault",
+                vault_account.as_ref(),
+                owner_account.as_ref(),
+                nonce_bytes.as_ref(),
+            ],
+            &program_id,
+        );
 
         // Manual verification
         let (expected_pda, expected_bump) = Pubkey::find_program_address(

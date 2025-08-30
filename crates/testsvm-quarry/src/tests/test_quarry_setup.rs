@@ -23,10 +23,13 @@ fn test_complete_quarry_integration() -> Result<()> {
     let test_rewarder = TestRewarder::new_rewarder(&mut env, "main", &authority)?;
 
     println!("   ✓ Created rewarder: {}", test_rewarder.rewarder);
-    println!("   ✓ Created mint wrapper: {}", test_rewarder.mint_wrapper);
+    println!(
+        "   ✓ Created mint wrapper: {}",
+        test_rewarder.mint_wrapper.mint_wrapper
+    );
     println!(
         "   ✓ Created reward token: {}",
-        test_rewarder.reward_token_mint
+        test_rewarder.mint_wrapper.reward_token_mint
     );
 
     // Step 4: Create staked token mint
@@ -56,12 +59,20 @@ fn test_complete_quarry_integration() -> Result<()> {
 
     // Step 7: Verify accounts that were created
     assert!(
-        test_rewarder.reward_token_mint.maybe_load(&env)?.is_some(),
+        test_rewarder
+            .mint_wrapper
+            .reward_token_mint
+            .maybe_load(&env)?
+            .is_some(),
         "Reward token mint should exist"
     );
 
     assert!(
-        test_rewarder.mint_wrapper.maybe_load(&env)?.is_some(),
+        test_rewarder
+            .mint_wrapper
+            .mint_wrapper
+            .maybe_load(&env)?
+            .is_some(),
         "Mint wrapper should exist"
     );
 
@@ -86,7 +97,7 @@ fn test_complete_quarry_integration() -> Result<()> {
     // Fetch and verify mint wrapper
     let mint_wrapper = test_rewarder.fetch_mint_wrapper(&env)?;
     assert_eq!(
-        mint_wrapper.token_mint, test_rewarder.reward_token_mint.key,
+        mint_wrapper.token_mint, test_rewarder.mint_wrapper.reward_token_mint.key,
         "MintWrapper should have correct token mint"
     );
     assert_eq!(
@@ -104,7 +115,7 @@ fn test_complete_quarry_integration() -> Result<()> {
         "Rewarder should have correct authority"
     );
     assert_eq!(
-        rewarder.mint_wrapper, test_rewarder.mint_wrapper.key,
+        rewarder.mint_wrapper, test_rewarder.mint_wrapper.mint_wrapper.key,
         "Rewarder should reference correct mint wrapper"
     );
     println!("   ✓ Rewarder data verified");

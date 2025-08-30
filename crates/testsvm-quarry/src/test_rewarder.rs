@@ -14,68 +14,38 @@
 //! - **Reward Configuration**: Set annual reward rates and distribution parameters
 //! - **Authority Control**: Manage rewarder authority and pause states
 
-use crate::{quarry_mine, quarry_mint_wrapper};
+use crate::{TestMintWrapper, quarry_mine, quarry_mint_wrapper};
 use anchor_lang::prelude::*;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use solana_sdk::signature::{Keypair, Signer};
-use testsvm::{AccountRef, TXResult, TestSVM, anchor_instruction};
+use testsvm::TXResult;
+use testsvm::prelude::*;
 
 /// Test rewarder with labeled accounts
 pub struct TestRewarder {
     pub label: String,
     pub rewarder: AccountRef<quarry_mine::accounts::Rewarder>,
-    pub mint_wrapper: AccountRef<quarry_mint_wrapper::accounts::MintWrapper>,
+    pub mint_wrapper: TestMintWrapper,
     pub minter: AccountRef<quarry_mint_wrapper::accounts::Minter>,
-    pub reward_token_mint: AccountRef<anchor_spl::token::Mint>,
     pub claim_fee_token_account: AccountRef<anchor_spl::token::TokenAccount>,
     pub authority: Pubkey,
 
-    // Keep the base keypairs for signing
-    pub mint_wrapper_base: Keypair,
+    // Keep the base keypair for signing
     pub rewarder_base: Keypair,
 }
 
 impl TestRewarder {
     /// Create a new rewarder with the specified label and authority
     pub fn new_rewarder(env: &mut TestSVM, label: &str, authority: &Keypair) -> Result<Self> {
-        let mint_wrapper_base = env.new_wallet(&format!("rewarder[{label}].mint_wrapper_base"))?;
+        // Create the mint wrapper using TestMintWrapper
+        let mint_wrapper = TestMintWrapper::new(env, &format!("rewarder[{label}]"), authority)?;
+
         let rewarder_base = env.new_wallet(&format!("rewarder[{label}].rewarder_base"))?;
-
-        // Calculate mint wrapper PDA
-        let (mint_wrapper, mint_wrapper_bump) = env.find_pda_with_bump(
-            &format!("rewarder[{label}].mint_wrapper"),
-            &[&"MintWrapper", &mint_wrapper_base.pubkey()],
-            quarry_mint_wrapper::ID,
-        )?;
-
-        // Create reward token mint with mint wrapper as authority
-        let reward_token_mint = env
-            .create_mint(&format!("rewarder[{label}].reward_token"), 6, &mint_wrapper)
-            .context("Failed to create reward token mint")?;
-
-        let create_wrapper_ix = anchor_instruction(
-            quarry_mint_wrapper::ID,
-            quarry_mint_wrapper::client::accounts::NewWrapper {
-                base: mint_wrapper_base.pubkey(),
-                mint_wrapper,
-                admin: authority.pubkey(),
-                token_mint: reward_token_mint.key,
-                token_program: anchor_spl::token::ID,
-                payer: env.default_fee_payer(),
-                system_program: solana_sdk::system_program::ID,
-            },
-            quarry_mint_wrapper::client::args::NewWrapper {
-                bump: mint_wrapper_bump,
-                hard_cap: u64::MAX,
-            },
-        );
-
-        env.execute_ixs_with_signers(&[create_wrapper_ix], &[&mint_wrapper_base])?;
 
         // Calculate rewarder PDA
         let rewarder = env.get_pda(
             &format!("rewarder[{label}].rewarder"),
-            &[&"Rewarder", &rewarder_base.pubkey()],
+            &[b"Rewarder", rewarder_base.pubkey().as_ref()],
             quarry_mine::ID,
         )?;
 
@@ -83,7 +53,7 @@ impl TestRewarder {
         let (create_ata_ix, claim_fee_token_account) = env.create_ata_ix(
             &format!("rewarder[{label}].claim_fee_tokens"),
             &rewarder.key,
-            &reward_token_mint.key,
+            &mint_wrapper.reward_token_mint.key,
         )?;
 
         env.execute_ixs(&[create_ata_ix])?;
@@ -97,8 +67,8 @@ impl TestRewarder {
                 initial_authority: authority.pubkey(),
                 payer: env.default_fee_payer(),
                 system_program: solana_sdk::system_program::ID,
-                mint_wrapper,
-                rewards_token_mint: reward_token_mint.key,
+                mint_wrapper: mint_wrapper.mint_wrapper.key,
+                rewards_token_mint: mint_wrapper.reward_token_mint.key,
                 claim_fee_token_account: claim_fee_token_account.key,
             },
             quarry_mine::client::args::NewRewarderV2 {},
@@ -106,52 +76,15 @@ impl TestRewarder {
 
         env.execute_ixs_with_signers(&[create_rewarder_ix], &[&rewarder_base])?;
 
-        // Create and approve minter for the mint wrapper
-        let minter = env.get_pda(
-            &format!("rewarder[{label}].minter"),
-            &[&"MintWrapperMinter", &mint_wrapper, &rewarder],
-            quarry_mint_wrapper::ID,
-        )?;
-
-        let create_minter_ix = anchor_instruction(
-            quarry_mint_wrapper::ID,
-            quarry_mint_wrapper::client::accounts::NewMinterV2 {
-                new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                    mint_wrapper,
-                    admin: authority.pubkey(),
-                },
-                new_minter_authority: rewarder.key,
-                minter: minter.key,
-                payer: env.default_fee_payer(),
-                system_program: solana_sdk::system_program::ID,
-            },
-            quarry_mint_wrapper::client::args::NewMinterV2 {},
-        );
-
-        let set_allowance_ix = anchor_instruction(
-            quarry_mint_wrapper::ID,
-            quarry_mint_wrapper::client::accounts::MinterUpdate {
-                minter: minter.key,
-                minter_update_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                    mint_wrapper,
-                    admin: authority.pubkey(),
-                },
-            },
-            quarry_mint_wrapper::client::args::MinterUpdate {
-                allowance: u64::MAX,
-            },
-        );
-
-        env.execute_ixs_with_signers(&[create_minter_ix, set_allowance_ix], &[authority])?;
+        // Create minter for the rewarder with max allowance
+        let minter = mint_wrapper.create_minter(env, &rewarder.key, u64::MAX, authority)?;
 
         Ok(TestRewarder {
             label: label.to_string(),
             rewarder,
-            mint_wrapper: AccountRef::new(mint_wrapper),
+            mint_wrapper,
             minter,
-            reward_token_mint,
             authority: authority.pubkey(),
-            mint_wrapper_base,
             rewarder_base,
             claim_fee_token_account,
         })
@@ -168,9 +101,13 @@ impl TestRewarder {
         let quarry_label = format!("rewarder[{}].quarry[{}]", self.label, quarry_name);
 
         // Calculate quarry PDA
-        let quarry = env.get_pda_key(
+        let quarry = env.get_pda(
             &format!("{quarry_label}.quarry"),
-            &[&"Quarry", &self.rewarder.key, staked_token_mint],
+            &[
+                b"Quarry",
+                self.rewarder.key.as_ref(),
+                staked_token_mint.as_ref(),
+            ],
             quarry_mine::ID,
         )?;
 
@@ -180,7 +117,7 @@ impl TestRewarder {
         let create_quarry_ix = anchor_instruction(
             quarry_mine::ID,
             quarry_mine::client::accounts::CreateQuarryV2 {
-                quarry,
+                quarry: quarry.key,
                 auth: TransferAuthority {
                     authority: authority.pubkey(),
                     rewarder: self.rewarder.key,
@@ -199,7 +136,7 @@ impl TestRewarder {
                     authority: authority.pubkey(),
                     rewarder: self.rewarder.key,
                 },
-                quarry,
+                quarry: quarry.key,
             },
             quarry_mine::client::args::SetRewardsShare { new_share: 1 },
         );
@@ -208,7 +145,7 @@ impl TestRewarder {
 
         Ok(crate::TestQuarry {
             label: quarry_label,
-            quarry: AccountRef::new(quarry),
+            quarry,
             rewarder: self.rewarder.key,
             staked_token_mint: AccountRef::new(*staked_token_mint),
         })
@@ -249,7 +186,7 @@ impl TestRewarder {
         &self,
         env: &TestSVM,
     ) -> Result<quarry_mint_wrapper::accounts::MintWrapper> {
-        self.mint_wrapper.load(env)
+        self.mint_wrapper.mint_wrapper.load(env)
     }
 
     /// Helper to set annual rewards rate for a quarry
@@ -285,7 +222,7 @@ impl TestRewarder {
         let (minter, minter_bump) = Pubkey::find_program_address(
             &[
                 b"MintWrapperMinter",
-                self.mint_wrapper.key.as_ref(),
+                self.mint_wrapper.mint_wrapper.key.as_ref(),
                 self.rewarder.key.as_ref(),
             ],
             &quarry_mint_wrapper::ID,
@@ -295,7 +232,7 @@ impl TestRewarder {
             quarry_mint_wrapper::ID,
             quarry_mint_wrapper::client::accounts::NewMinter {
                 new_minter_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                    mint_wrapper: self.mint_wrapper.key,
+                    mint_wrapper: self.mint_wrapper.mint_wrapper.key,
                     admin: authority.pubkey(),
                 },
                 new_minter_authority: self.rewarder.key,
@@ -315,7 +252,7 @@ impl TestRewarder {
                 format!("rewarder[{}].minter[{}]", self.label, label),
                 vec![
                     "MintWrapperMinter".to_string(),
-                    self.mint_wrapper.key.to_string(),
+                    self.mint_wrapper.mint_wrapper.key.to_string(),
                     self.rewarder.key.to_string(),
                 ],
                 quarry_mint_wrapper::ID,

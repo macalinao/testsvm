@@ -20,9 +20,9 @@ fn test_create_minter_incorrect_authority() -> Result<()> {
     let minter_pda: AccountRef<quarry_mint_wrapper::accounts::Minter> = env.get_pda(
         "unauthorized_minter",
         &[
-            &"MintWrapperMinter",
-            &rewarder.mint_wrapper.key,
-            &other_rewarder.rewarder.key,
+            b"MintWrapperMinter",
+            rewarder.mint_wrapper.mint_wrapper.key.as_ref(),
+            other_rewarder.rewarder.key.as_ref(),
         ],
         quarry_mint_wrapper::ID,
     )?;
@@ -31,7 +31,7 @@ fn test_create_minter_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::NewMinterV2 {
             new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper: rewarder.mint_wrapper.key,
+                mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
                 admin: unauthorized.pubkey(), // Wrong authority
             },
             new_minter_authority: other_rewarder.rewarder.key,
@@ -52,9 +52,9 @@ fn test_create_minter_incorrect_authority() -> Result<()> {
     let authorized_minter_pda: AccountRef<quarry_mint_wrapper::accounts::Minter> = env.get_pda(
         "authorized_minter",
         &[
-            &"MintWrapperMinter",
-            &rewarder.mint_wrapper.key,
-            &new_minter_authority.pubkey(),
+            b"MintWrapperMinter",
+            rewarder.mint_wrapper.mint_wrapper.key.as_ref(),
+            new_minter_authority.pubkey().as_ref(),
         ],
         quarry_mint_wrapper::ID,
     )?;
@@ -63,7 +63,7 @@ fn test_create_minter_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::NewMinterV2 {
             new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper: rewarder.mint_wrapper.key,
+                mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
                 admin: authority.pubkey(), // Correct authority
             },
             new_minter_authority: new_minter_authority.pubkey(),
@@ -96,30 +96,27 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
     let _rewarder_base = env.new_wallet("rewarder_base")?;
 
     // Calculate mint wrapper PDA
-    let (mint_wrapper, mint_wrapper_bump) = env.find_pda_with_bump(
+    let mint_wrapper: AccountRef<quarry_mint_wrapper::accounts::MintWrapper> = env.get_pda(
         "mint_wrapper",
-        &[&"MintWrapper", &mint_wrapper_base.pubkey()],
+        &[b"MintWrapper", mint_wrapper_base.pubkey().as_ref()],
         quarry_mint_wrapper::ID,
     )?;
 
     // Create reward token mint with mint wrapper as authority
-    let reward_token_mint = env.create_mint("reward_token", 6, &mint_wrapper)?;
+    let reward_token_mint = env.create_mint("reward_token", 6, &mint_wrapper.key)?;
 
     let create_wrapper_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
-        quarry_mint_wrapper::client::accounts::NewWrapper {
+        quarry_mint_wrapper::client::accounts::NewWrapperV2 {
             base: mint_wrapper_base.pubkey(),
-            mint_wrapper,
+            mint_wrapper: mint_wrapper.key,
             admin: authority.pubkey(),
             token_mint: reward_token_mint.key,
             token_program: anchor_spl::token::ID,
             payer: env.default_fee_payer(),
             system_program: solana_sdk::system_program::ID,
         },
-        quarry_mint_wrapper::client::args::NewWrapper {
-            bump: mint_wrapper_bump,
-            hard_cap: u64::MAX,
-        },
+        quarry_mint_wrapper::client::args::NewWrapperV2 { hard_cap: u64::MAX },
     );
 
     env.execute_ixs_with_signers(&[create_wrapper_ix], &[&mint_wrapper_base])?;
@@ -128,9 +125,9 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
     let minter: AccountRef<quarry_mint_wrapper::accounts::Minter> = env.get_pda(
         "minter",
         &[
-            &"MintWrapperMinter",
-            &mint_wrapper,
-            &new_minter_authority.pubkey(),
+            b"MintWrapperMinter",
+            mint_wrapper.key.as_ref(),
+            new_minter_authority.pubkey().as_ref(),
         ],
         quarry_mint_wrapper::ID,
     )?;
@@ -139,7 +136,7 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::NewMinterV2 {
             new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper,
+                mint_wrapper: mint_wrapper.key,
                 admin: authority.pubkey(),
             },
             new_minter_authority: new_minter_authority.pubkey(),
@@ -155,7 +152,7 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::client::accounts::MinterUpdate {
             minter: minter.key,
             minter_update_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper,
+                mint_wrapper: mint_wrapper.key,
                 admin: authority.pubkey(),
             },
         },
@@ -172,7 +169,7 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::client::accounts::MinterUpdate {
             minter: minter.key,
             minter_update_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper,
+                mint_wrapper: mint_wrapper.key,
                 admin: unauthorized.pubkey(), // Wrong authority
             },
         },
@@ -191,7 +188,7 @@ fn test_update_minter_allowance_incorrect_authority() -> Result<()> {
         quarry_mint_wrapper::client::accounts::MinterUpdate {
             minter: minter.key,
             minter_update_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper,
+                mint_wrapper: mint_wrapper.key,
                 admin: authority.pubkey(), // Correct authority
             },
         },
@@ -237,7 +234,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
     let unauthorized_transfer_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::TransferAdmin {
-            mint_wrapper: rewarder.mint_wrapper.key,
+            mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
             admin: unauthorized.pubkey(), // Wrong current admin
             next_admin: new_authority.pubkey(),
         },
@@ -252,7 +249,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
     let transfer_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::TransferAdmin {
-            mint_wrapper: rewarder.mint_wrapper.key,
+            mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
             admin: original_authority.pubkey(),
             next_admin: new_authority.pubkey(),
         },
@@ -279,7 +276,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
     let unauthorized_accept_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::AcceptAdmin {
-            mint_wrapper: rewarder.mint_wrapper.key,
+            mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
             pending_admin: unauthorized.pubkey(), // Wrong pending admin
         },
         quarry_mint_wrapper::client::args::AcceptAdmin {},
@@ -293,7 +290,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
     let accept_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::AcceptAdmin {
-            mint_wrapper: rewarder.mint_wrapper.key,
+            mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
             pending_admin: new_authority.pubkey(),
         },
         quarry_mint_wrapper::client::args::AcceptAdmin {},
@@ -320,9 +317,9 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
     let test_minter: AccountRef<quarry_mint_wrapper::accounts::Minter> = env.get_pda(
         "test_minter",
         &[
-            &"MintWrapperMinter",
-            &rewarder.mint_wrapper.key,
-            &test_minter_authority.pubkey(),
+            b"MintWrapperMinter",
+            rewarder.mint_wrapper.mint_wrapper.key.as_ref(),
+            test_minter_authority.pubkey().as_ref(),
         ],
         quarry_mint_wrapper::ID,
     )?;
@@ -331,7 +328,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::NewMinterV2 {
             new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper: rewarder.mint_wrapper.key,
+                mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
                 admin: original_authority.pubkey(), // Old authority
             },
             new_minter_authority: test_minter_authority.pubkey(),
@@ -351,7 +348,7 @@ fn test_transfer_mint_wrapper_authority() -> Result<()> {
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::NewMinterV2 {
             new_minter_v2_auth: quarry_mint_wrapper::client::accounts::NewMinterAuth {
-                mint_wrapper: rewarder.mint_wrapper.key,
+                mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
                 admin: new_authority.pubkey(), // New authority
             },
             new_minter_authority: test_minter_authority.pubkey(),
@@ -392,7 +389,7 @@ fn test_perform_mint_incorrect_authority() -> Result<()> {
     let (create_ata_ix, destination) = env.create_ata_ix(
         "destination",
         &destination_owner.pubkey(),
-        &rewarder.reward_token_mint.into(),
+        &rewarder.mint_wrapper.reward_token_mint.into(),
     )?;
     env.execute_ixs(&[create_ata_ix])?;
 
@@ -401,9 +398,9 @@ fn test_perform_mint_incorrect_authority() -> Result<()> {
     let mint_ix = anchor_instruction(
         quarry_mint_wrapper::ID,
         quarry_mint_wrapper::client::accounts::PerformMint {
-            mint_wrapper: rewarder.mint_wrapper.key,
+            mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
             minter_authority: unauthorized.pubkey(), // Wrong minter authority
-            token_mint: rewarder.reward_token_mint.key,
+            token_mint: rewarder.mint_wrapper.reward_token_mint.key,
             destination: destination.into(),
             minter: rewarder.minter.key,
             token_program: anchor_spl::token::ID,

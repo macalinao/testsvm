@@ -5174,6 +5174,20 @@ dependencies = [
  "solana-address-book",
  "solana-sdk",
  "strum",
+ "testsvm-core",
+ "testsvm-spl",
+]
+
+[[package]]
+name = "testsvm-core"
+version = "0.1.1"
+dependencies = [
+ "anchor-lang",
+ "anyhow",
+ "colored",
+ "litesvm",
+ "solana-address-book",
+ "solana-sdk",
 ]
 
 [[package]]
@@ -5187,6 +5201,18 @@ dependencies = [
  "solana-program",
  "solana-sdk",
  "testsvm",
+]
+
+[[package]]
+name = "testsvm-spl"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
+ "anyhow",
+ "solana-address-book",
+ "solana-sdk",
+ "testsvm-core",
 ]
 
 [[package]]

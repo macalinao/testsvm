@@ -15,11 +15,14 @@ pub use crate::{
     TestSVM,
 };
 
+// SPL helpers
+pub use crate::TestSVMSPLHelpers;
+
 // Address book exports
 pub use crate::{AddressBook, AddressRole, RegisteredAddress};
 
 // PDA utilities
-pub use crate::{DerivedPda, SeedPart};
+pub use crate::DerivedPda;
 
 // Helper functions
 pub use crate::anchor_instruction;

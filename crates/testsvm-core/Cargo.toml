@@ -1,0 +1,21 @@
+[package]
+name = "testsvm-core"
+version = "0.1.1"
+authors = ["Ian Macalinao <me@ianm.com>"]
+edition = "2024"
+license = "Apache-2.0"
+description = "Core TestSVM implementation for Solana program testing"
+repository = "https://github.com/macalinao/testsvm"
+documentation = "https://docs.rs/testsvm-core"
+homepage = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = ["ian-macalinao", "solana", "testing", "blockchain", "testsvm"]
+categories = ["development-tools::testing", "cryptography::cryptocurrencies"]
+
+[dependencies]
+anyhow = "1.0"
+litesvm = "0.6"
+solana-sdk = "2.2"
+solana-address-book = { path = "../solana-address-book", version = "0.1.1" }
+anchor-lang = "0.31"
+colored = "3"

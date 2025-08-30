@@ -1,26 +1,16 @@
-//! # TestSVM Implementation
+//! # TestSVM Core
 //!
-//! Core implementation of the TestSVM testing framework wrapper.
+//! Core implementation of the TestSVM testing framework for Solana programs.
 //!
-//! This module contains the main `TestSVM` struct and its implementation, providing
-//! a comprehensive testing environment for Solana programs. It wraps LiteSVM with
-//! additional functionality for transaction management, account creation, token operations,
+//! This crate provides the fundamental `TestSVM` struct that wraps LiteSVM
+//! with additional functionality for transaction management, account creation,
 //! and enhanced debugging capabilities.
-//!
-//! ## Architecture
-//!
-//! - **LiteSVM Wrapper**: Extends LiteSVM with developer-friendly APIs
-//! - **Default Fee Payer**: Automatic transaction fee management
-//! - **Address Book**: Integrated labeling system for all accounts
-//! - **Transaction Result**: Rich error reporting and transaction analysis
-//! - **Token Operations**: Built-in SPL Token program support
 
 use std::{
     env,
     path::{Path, PathBuf},
 };
 
-use anchor_spl::token;
 use anyhow::*;
 use litesvm::LiteSVM;
 use solana_sdk::{
@@ -30,7 +20,16 @@ use solana_sdk::{
     transaction::Transaction,
 };
 
-use crate::{AccountRef, AddressBook, SeedPart, TXError, TXResult, new_funded_account};
+pub use solana_address_book::AddressBook;
+
+mod tx_result;
+pub use tx_result::{TXError, TXResult};
+
+mod account_ref;
+pub use account_ref::AccountRef;
+
+mod litesvm_helpers;
+use litesvm_helpers::new_funded_account;
 
 /// Test SVM wrapper for LiteSVM with payer management and Anchor helpers
 pub struct TestSVM {
@@ -111,47 +110,6 @@ impl TestSVM {
         Ok(keypair)
     }
 
-    /// Create a mint with the test SVM's payer and add to address book
-    pub fn create_mint(
-        &mut self,
-        name: &str,
-        decimals: u8,
-        authority: &Pubkey,
-    ) -> Result<AccountRef<anchor_spl::token::Mint>> {
-        let mint = Keypair::new();
-
-        let rent = self
-            .svm
-            .minimum_balance_for_rent_exemption(token::Mint::LEN); // Mint account size
-
-        let create_account_ix = solana_sdk::system_instruction::create_account(
-            &self.default_fee_payer.pubkey(),
-            &mint.pubkey(),
-            rent,
-            anchor_spl::token::Mint::LEN as u64, // Mint account size
-            &anchor_spl::token::ID,
-        );
-
-        let init_mint_ix = anchor_spl::token::spl_token::instruction::initialize_mint(
-            &anchor_spl::token::ID,
-            &mint.pubkey(),
-            authority,
-            Some(authority), // Set freeze authority to same as mint authority
-            decimals,
-        )
-        .context("Failed to create initialize mint instruction")?;
-
-        self.execute_ixs_with_signers(&[create_account_ix, init_mint_ix], &[&mint])
-            .map_err(|e| anyhow!("Failed to create mint: {}", e))?;
-
-        // Add the mint to the address book
-        let mint_pubkey = mint.pubkey();
-        let label = format!("mint:{name}");
-        self.address_book.add_mint(mint_pubkey, label)?;
-
-        Ok(AccountRef::new(mint_pubkey))
-    }
-
     /// Get the default fee payer's public key
     pub fn default_fee_payer(&self) -> Pubkey {
         self.default_fee_payer.pubkey()
@@ -172,35 +130,6 @@ impl TestSVM {
     ///
     /// This method loads a program binary from the fixtures directory. The fixture file
     /// should be located at `fixtures/programs/{fixture_name}.so` relative to your project root.
-    ///
-    /// # Arguments
-    /// * `fixture_name` - The name of the fixture file (without the .so extension)
-    /// * `pubkey` - The public key to assign to the program
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// # use testsvm::TestSVM;
-    /// # use solana_sdk::pubkey::Pubkey;
-    /// # use anyhow::Result;
-    /// # fn main() -> Result<()> {
-    /// # let mut env = TestSVM::init()?;
-    /// # let program_id = Pubkey::new_unique();
-    /// // This will load the file from fixtures/programs/my_program.so
-    /// env.add_program_fixture("my_program", program_id)?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    ///
-    /// # File Structure
-    /// Your project should have the following structure:
-    /// ```text
-    /// project_root/
-    /// ├── fixtures/
-    /// │   └── programs/
-    /// │       ├── my_program.so
-    /// │       └── other_program.so
-    /// └── src/
-    /// ```
     pub fn add_program_fixture(&mut self, fixture_name: &str, pubkey: Pubkey) -> Result<()> {
         let path = env::var("CARGO_MANIFEST_DIR")
             .map(PathBuf::from)
@@ -222,63 +151,16 @@ impl TestSVM {
         Ok(())
     }
 
-    /// Create an associated token account instruction and add to address book
-    /// Returns the instruction and the ATA address
-    pub fn create_ata_ix(
-        &mut self,
-        label: &str,
-        owner: &Pubkey,
-        mint: &Pubkey,
-    ) -> Result<(
-        solana_sdk::instruction::Instruction,
-        AccountRef<anchor_spl::token::TokenAccount>,
-    )> {
-        let ata = anchor_spl::associated_token::get_associated_token_address(owner, mint);
-
-        // Add to address book (ignore error if duplicate)
-        self.address_book
-            .add_ata(ata, label.to_string(), *mint, *owner)?;
-
-        let ix = anchor_spl::associated_token::spl_associated_token_account::instruction::create_associated_token_account_idempotent(
-            &self.default_fee_payer(),
-            owner,
-            mint,
-            &anchor_spl::token::ID,
-        );
-
-        Ok((ix, AccountRef::new(ata)))
-    }
-
-    /// Find a PDA with bump and add it to the address book  
-    pub fn find_pda_with_bump(
-        &mut self,
-        label: &str,
-        seeds: &[&dyn SeedPart],
-        program_id: Pubkey,
-    ) -> Result<(Pubkey, u8)> {
-        self.address_book
-            .find_pda_with_bump(label, seeds, program_id)
-    }
-
-    /// Find a PDA and add it to the address book
-    pub fn get_pda_key(
-        &mut self,
-        label: &str,
-        seeds: &[&dyn SeedPart],
-        program_id: Pubkey,
-    ) -> Result<Pubkey> {
-        let (pubkey, _bump) = self.find_pda_with_bump(label, seeds, program_id)?;
-        Ok(pubkey)
-    }
-
-    /// Find a PDA and return an AccountRef with proper type information
+    /// Finds a program derived address and return an [AccountRef] with proper type information.
     pub fn get_pda<T: anchor_lang::AccountDeserialize>(
         &mut self,
         label: &str,
-        seeds: &[&dyn SeedPart],
+        seeds: &[&[u8]],
         program_id: Pubkey,
     ) -> Result<AccountRef<T>> {
-        let pubkey = self.get_pda_key(label, seeds, program_id)?;
+        let (pubkey, _bump) = self
+            .address_book
+            .find_pda_with_bump(label, seeds, program_id)?;
         Ok(AccountRef::new(pubkey))
     }
 

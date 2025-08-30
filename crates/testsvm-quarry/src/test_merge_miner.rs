@@ -16,7 +16,7 @@
 
 use anyhow::Result;
 use solana_sdk::pubkey::Pubkey;
-use testsvm::{AccountRef, TestSVM, anchor_instruction};
+use testsvm::prelude::*;
 
 use crate::{quarry_merge_mine, quarry_mine};
 
@@ -45,7 +45,7 @@ impl TestMergeMiner {
         // Get primary miner PDA
         let primary_miner = env.get_pda::<quarry_mine::accounts::Miner>(
             &format!("{label}_primary_miner"),
-            &[&"Miner", quarry, &self.merge_miner.key],
+            &[b"Miner", quarry.as_ref(), self.merge_miner.key.as_ref()],
             crate::quarry_mine::ID,
         )?;
 
@@ -98,7 +98,7 @@ impl TestMergeMiner {
         // Get replica miner PDA
         let replica_miner = env.get_pda::<quarry_mine::accounts::Miner>(
             &format!("{label}_replica_miner"),
-            &[&"Miner", quarry, &self.merge_miner.key],
+            &[b"Miner", quarry.as_ref(), self.merge_miner.key.as_ref()],
             crate::quarry_mine::ID,
         )?;
 

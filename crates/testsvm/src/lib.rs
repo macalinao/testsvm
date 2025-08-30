@@ -81,7 +81,7 @@
 //! ## Account Management
 //!
 //! ```rust
-//! use testsvm::{TestSVM, AccountRef};
+//! use testsvm::{TestSVM, AccountRef, TestSVMSPLHelpers};
 //! use solana_sdk::signature::Signer;
 //! # use anyhow::Result;
 //! # fn main() -> Result<()> {
@@ -232,17 +232,14 @@
 //! # }
 //! ```
 
-pub mod account_ref;
 pub mod assertions;
-pub mod litesvm_helpers;
 pub mod prelude;
-pub mod testsvm;
-pub mod tx_result;
 
+// Re-export from other crates
 pub use ::anchor_utils::*;
 pub use ::solana_address_book::*;
-pub use account_ref::*;
+pub use testsvm_core::*;
+pub use testsvm_spl::*;
+
+// Re-export local modules
 pub use assertions::*;
-pub use litesvm_helpers::*;
-pub use testsvm::*;
-pub use tx_result::*;
