@@ -14,4 +14,4 @@ categories = ["development-tools", "cryptography::cryptocurrencies"]
 
 [dependencies]
 anchor-lang = "0.31.1"
-solana-program = "2"
+solana-program = "3"
