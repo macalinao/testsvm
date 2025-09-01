@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0](https://github.com/macalinao/testsvm/compare/testsvm-quarry-v0.1.0...testsvm-quarry-v0.2.0) - 2025-09-01
+## [0.1.0](https://github.com/macalinao/testsvm/releases/tag/testsvm-spl-v0.1.0) - 2025-09-01
 
 ### Fixed
 
@@ -17,20 +17,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reorganize testsvm-assertions
 - Split out testsvm-core and testsvm-spl from main testsvm package
-
-## [0.1.0](https://github.com/macalinao/testsvm/releases/tag/testsvm-quarry-v0.1.0) - 2025-08-28
-
-### Fixed
-
-- fix clippy, add prelude
-
-### Other
-
-- format agian
-- more fixes
-- doctests
-- readmes
-- Add GitHub actions, more tests
-- mroe cleanup
-- basic readme
-- Initial commit

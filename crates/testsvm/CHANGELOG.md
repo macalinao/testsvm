@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/macalinao/testsvm/compare/testsvm-v0.1.1...testsvm-v0.2.0) - 2025-09-01
+
+### Fixed
+
+- fix duplicate anchor_instruction, more reorganization
+
+### Other
+
+- Reorganize testsvm-assertions
+- testsvm-assertions crate
+- Split out testsvm-core and testsvm-spl from main testsvm package
+- assertions cleanup
+
 ## [0.1.1](https://github.com/macalinao/testsvm/releases/tag/testsvm-v0.1.1) - 2025-08-28
 
 ### Fixed
