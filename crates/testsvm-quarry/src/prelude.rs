@@ -21,7 +21,7 @@
 pub use testsvm::prelude::*;
 
 // Quarry test helpers
-pub use crate::{TestMergeMiner, TestMergePool, TestQuarry, TestRewarder};
+pub use crate::{TestMergeMiner, TestMergePool, TestMintWrapper, TestQuarry, TestRewarder};
 
 // Setup functions
 pub use crate::setup_quarry_programs;
