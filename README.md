@@ -40,6 +40,12 @@ The following crates are used internally by TestSVM, but are not documented or i
 - `solana-address-book` - Keeps track of all the addresses used in the tests
 - `anchor-utils` - Lightweight utilities for interacting with programs that use Anchor.
 
+## Demo
+
+Below is a screenshot of what happens when a test fails: detailed labels and logs of what accounts were involved in the transaction, what accounts were writable, and what error was thrown.
+
+![Demo of address book](/images/demo-accounts.jpg)
+
 ## License
 
 Copyright (c) 2025 Ian Macalinao. Licensed under the Apache License, Version 2.0.
