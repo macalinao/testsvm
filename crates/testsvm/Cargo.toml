@@ -1,6 +1,6 @@
 [package]
 name = "testsvm"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2024"
 license = "Apache-2.0"
 authors = ["Ian Macalinao <me@ianm.com>"]
@@ -13,7 +13,7 @@ keywords = ["ian-macalinao", "solana", "svm", "testing", "blockchain"]
 categories = ["development-tools::testing", "simulation"]
 
 [dependencies]
-solana-address-book = { version = "0.1.1", path = "../solana-address-book" }
+solana-address-book = { version = "0.2.0", path = "../solana-address-book" }
 anchor-utils = { version = "0.1.0", path = "../anchor-utils" }
 testsvm-assertions = { version = "0.1.0", path = "../testsvm-assertions" }
 testsvm-core = { version = "0.1.1", path = "../testsvm-core" }
