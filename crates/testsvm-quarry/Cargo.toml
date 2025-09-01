@@ -1,6 +1,6 @@
 [package]
 name = "testsvm-quarry"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "Apache-2.0"
 authors = ["Ian Macalinao <me@ianm.com>"]
@@ -19,6 +19,6 @@ anchor-spl = { version = "0.31.1", features = ["token", "associated_token"] }
 litesvm = "0.6.1"
 solana-sdk = "2.2"
 solana-program = "2.2"
-testsvm = { version = "0.1.1", path = "../testsvm" }
+testsvm = { version = "0.2.0", path = "../testsvm" }
 
 [dev-dependencies]

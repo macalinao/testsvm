@@ -26,4 +26,4 @@ solana-sdk = "2.2"
 anchor-spl = "0.31"
 anchor-lang = "0.31"
 testsvm-core = { path = "../testsvm-core", version = "0.1.1" }
-solana-address-book = { path = "../solana-address-book", version = "0.1.1" }
+solana-address-book = { path = "../solana-address-book", version = "0.2.0" }
