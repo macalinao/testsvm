@@ -75,7 +75,7 @@ fn test_claim_rewards() -> Result<()> {
     let (create_ata_ix, user_rewards_account) = env.create_ata_ix(
         "user_rewards",
         &user.pubkey(),
-        &rewarder.reward_token_mint.key,
+        &rewarder.mint_wrapper.reward_token_mint.key,
     )?;
     env.execute_ixs(&[create_ata_ix])?;
 
@@ -172,7 +172,7 @@ fn test_claim_rewards_wrong_authority() -> Result<()> {
     let (create_ata_ix, wrong_user_rewards) = env.create_ata_ix(
         "wrong_user_rewards",
         &wrong_user.pubkey(),
-        &rewarder.reward_token_mint.key,
+        &rewarder.mint_wrapper.reward_token_mint.key,
     )?;
     env.execute_ixs(&[create_ata_ix])?;
 
@@ -224,7 +224,7 @@ fn test_claim_rewards_no_stake() -> Result<()> {
     let (create_ata_ix, user_rewards) = env.create_ata_ix(
         "user_rewards",
         &user.pubkey(),
-        &rewarder.reward_token_mint.key,
+        &rewarder.mint_wrapper.reward_token_mint.key,
     )?;
     env.execute_ixs(&[create_ata_ix])?;
 
@@ -315,10 +315,16 @@ fn test_claim_rewards_multiple_users() -> Result<()> {
     quarry.update_quarry_rewards(&mut env)?;
 
     // Create reward accounts
-    let (ix1, rewards1) =
-        env.create_ata_ix("rewards1", &user1.pubkey(), &rewarder.reward_token_mint.key)?;
-    let (ix2, rewards2) =
-        env.create_ata_ix("rewards2", &user2.pubkey(), &rewarder.reward_token_mint.key)?;
+    let (ix1, rewards1) = env.create_ata_ix(
+        "rewards1",
+        &user1.pubkey(),
+        &rewarder.mint_wrapper.reward_token_mint.key,
+    )?;
+    let (ix2, rewards2) = env.create_ata_ix(
+        "rewards2",
+        &user2.pubkey(),
+        &rewarder.mint_wrapper.reward_token_mint.key,
+    )?;
     env.execute_ixs(&[ix1, ix2])?;
 
     // Both users claim rewards

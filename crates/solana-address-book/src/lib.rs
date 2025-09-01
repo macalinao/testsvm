@@ -32,7 +32,7 @@
 //!
 //! // Add a token mint
 //! let token_mint = Pubkey::new_unique();
-//! book.add_mint(token_mint, "usdc_mint".to_string()).unwrap();
+//! book.add(token_mint, "usdc_mint".to_string(), RegisteredAddress::mint(token_mint)).unwrap();
 //!
 //! // Get a formatted label for display
 //! println!("User address: {}", book.format_address(&user));
@@ -43,7 +43,7 @@
 //! ### Managing Different Address Types
 //!
 //! ```rust
-//! use solana_address_book::AddressBook;
+//! use solana_address_book::{AddressBook, RegisteredAddress};
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
@@ -56,7 +56,7 @@
 //! let ata = Pubkey::new_unique();
 //! let mint = Pubkey::new_unique();
 //! let owner = Pubkey::new_unique();
-//! book.add_ata(ata, "alice_usdc_ata".to_string(), mint, owner).unwrap();
+//! book.add(ata, "alice_usdc_ata".to_string(), RegisteredAddress::ata(ata, mint, owner)).unwrap();
 //!
 //! // Add a Program Derived Address (PDA)
 //! let pda = Pubkey::new_unique();
@@ -109,23 +109,23 @@
 //! ### PDA Creation and Registration
 //!
 //! ```rust
-//! use solana_address_book::{AddressBook, RegisteredAddress, SeedPart};
+//! use solana_address_book::{AddressBook, RegisteredAddress};
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
 //! let program_id = Pubkey::new_unique();
 //!
 //! // Create and register a PDA in one step
+//! let user = Pubkey::new_unique();
 //! let (pda_key, bump) = book.find_pda_with_bump(
 //!     "user_vault",
-//!     &[&"vault", &Pubkey::new_unique()],
+//!     &[b"vault", user.as_ref()],
 //!     program_id
 //! ).unwrap();
 //!
 //! // Or create a PDA manually
-//! let seeds: Vec<&dyn SeedPart> = vec![&"config", &"v1"];
 //! let (pubkey, bump, registered) = RegisteredAddress::pda(
-//!     &seeds,
+//!     &[b"config", b"v1"],
 //!     &program_id
 //! );
 //! book.add(pubkey, "config_account".to_string(), registered).unwrap();
@@ -134,12 +134,12 @@
 //! ### Text Processing and Display
 //!
 //! ```rust
-//! use solana_address_book::AddressBook;
+//! use solana_address_book::{AddressBook, RegisteredAddress};
 //! use anchor_lang::prelude::*;
 //!
 //! let mut book = AddressBook::new();
 //! let token = Pubkey::new_unique();
-//! book.add_mint(token, "my_token".to_string()).unwrap();
+//! book.add(token, "my_token".to_string(), RegisteredAddress::mint(token)).unwrap();
 //!
 //! // Replace addresses in text with their labels
 //! let log = format!("Transfer from {} to {}", Pubkey::new_unique(), token);
@@ -155,7 +155,7 @@
 //! This crate is designed to work seamlessly with Solana testing frameworks:
 //!
 //! ```rust
-//! use solana_address_book::AddressBook;
+//! use solana_address_book::{AddressBook, RegisteredAddress};
 //! use anchor_lang::prelude::*;
 //!
 //! fn setup_test_environment() -> AddressBook {
@@ -170,7 +170,8 @@
 //!     
 //!     // Track all test tokens
 //!     let test_token = Pubkey::new_unique();
-//!     book.add_mint(test_token, "test_token".to_string()).unwrap();
+//!     book.add(test_token, "test_token".to_string(), RegisteredAddress::mint(test_token))
+//!         .unwrap();
 //!     
 //!     book
 //! }
@@ -181,7 +182,5 @@ pub mod pda_seeds;
 pub mod registered_address;
 
 pub use address_book::AddressBook;
-pub use pda_seeds::{
-    DerivedPda, SeedPart, find_pda_with_bump, find_pda_with_bump_and_strings, seed_to_string,
-};
+pub use pda_seeds::{DerivedPda, find_pda_with_bump_and_strings, seed_to_string};
 pub use registered_address::{AddressRole, RegisteredAddress};

@@ -1,6 +1,6 @@
 //! Registered address types and utilities for the address book.
 
-use crate::pda_seeds::{SeedPart, find_pda_with_bump_and_strings};
+use crate::pda_seeds::find_pda_with_bump_and_strings;
 use anchor_lang::prelude::*;
 
 /// Role type for registered addresses, defining the purpose of each address
@@ -168,15 +168,14 @@ impl RegisteredAddress {
     /// # Example
     /// ```
     /// use anchor_lang::prelude::*;
-    /// use solana_address_book::{RegisteredAddress, SeedPart};
+    /// use solana_address_book::RegisteredAddress;
     ///
     /// let program_id = Pubkey::new_unique();
     /// let user = Pubkey::new_unique();
-    /// let seeds: Vec<&dyn SeedPart> = vec![&"vault", &user];
     ///
-    /// let (pda_key, bump, registered) = RegisteredAddress::pda(&seeds, &program_id);
+    /// let (pda_key, bump, registered) = RegisteredAddress::pda(&[b"vault", user.as_ref()], &program_id);
     /// ```
-    pub fn pda(seeds: &[&dyn SeedPart], program_id: &Pubkey) -> (Pubkey, u8, Self) {
+    pub fn pda(seeds: &[&[u8]], program_id: &Pubkey) -> (Pubkey, u8, Self) {
         let derived_pda = find_pda_with_bump_and_strings(seeds, program_id);
 
         (
@@ -317,9 +316,7 @@ mod tests {
     #[test]
     fn test_pda_creation() {
         let program_id = Pubkey::new_unique();
-        let seeds: Vec<&dyn SeedPart> = vec![&"test", &"seed"];
-
-        let (pubkey, bump, registered) = RegisteredAddress::pda(&seeds, &program_id);
+        let (pubkey, bump, registered) = RegisteredAddress::pda(&[b"test", b"seed"], &program_id);
 
         assert_eq!(registered.key, pubkey);
         if let AddressRole::Pda {

@@ -19,7 +19,7 @@ use anyhow::Result;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::signature::{Keypair, Signer};
 use std::fmt;
-use testsvm::{AccountRef, TestSVM, anchor_instruction};
+use testsvm::prelude::*;
 
 /// Test quarry with labeled accounts
 #[derive(Debug)]
@@ -48,7 +48,7 @@ impl TestQuarry {
     )> {
         let miner = env.get_pda(
             &format!("miner_{label}"),
-            &[b"Miner", &self.quarry.key.as_ref(), &user.pubkey().as_ref()],
+            &[b"Miner", self.quarry.key.as_ref(), user.pubkey().as_ref()],
             quarry_mine::ID,
         )?;
 
@@ -169,7 +169,7 @@ impl TestQuarry {
         let (minter, _) = Pubkey::find_program_address(
             &[
                 b"MintWrapperMinter",
-                rewarder.mint_wrapper.key.as_ref(),
+                rewarder.mint_wrapper.mint_wrapper.key.as_ref(),
                 rewarder.rewarder.key.as_ref(),
             ],
             &quarry_mint_wrapper::ID,
@@ -178,10 +178,10 @@ impl TestQuarry {
         let claim_ix = anchor_instruction(
             quarry_mine::ID,
             quarry_mine::client::accounts::ClaimRewardsV2 {
-                mint_wrapper: rewarder.mint_wrapper.key,
+                mint_wrapper: rewarder.mint_wrapper.mint_wrapper.key,
                 mint_wrapper_program: quarry_mint_wrapper::ID,
                 minter,
-                rewards_token_mint: rewarder.reward_token_mint.key,
+                rewards_token_mint: rewarder.mint_wrapper.reward_token_mint.key,
                 rewards_token_account: user_rewards_account.key,
                 claim_fee_token_account: rewarder.claim_fee_token_account.key,
                 claim: quarry_mine::client::accounts::Claim {

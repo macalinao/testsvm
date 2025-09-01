@@ -13,7 +13,7 @@
 //! - **quarry_mint_wrapper**: Wrapped token minting capabilities
 
 use anyhow::Result;
-use testsvm::TestSVM;
+use testsvm::prelude::*;
 
 use crate::quarry_mine;
 

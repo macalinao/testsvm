@@ -10,29 +10,7 @@
 //! ```
 
 // Core TestSVM types
-pub use crate::{
-    AccountRef, TXError, TXErrorAssertions, TXResult, TXResultAssertions, TXSuccessAssertions,
-    TestSVM,
-};
-
-// Address book exports
-pub use crate::{AddressBook, AddressRole, RegisteredAddress};
-
-// PDA utilities
-pub use crate::{DerivedPda, SeedPart};
-
-// Helper functions
-pub use crate::anchor_instruction;
-
-// Re-export commonly used Solana SDK types
-pub use solana_sdk::{
-    instruction::Instruction,
-    pubkey::Pubkey,
-    signature::{Keypair, Signer},
-    system_program, sysvar,
-    transaction::Transaction,
-};
-
-// Re-export Anchor types that are commonly used
-pub use anchor_lang::{InstructionData, Key, ToAccountMetas, prelude::*};
 pub use anchor_spl;
+pub use testsvm_assertions::{TXErrorAssertions, TXResultAssertions, TXSuccessAssertions};
+pub use testsvm_core::prelude::*;
+pub use testsvm_spl::prelude::*;

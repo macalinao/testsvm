@@ -1,0 +1,30 @@
+[package]
+name = "testsvm-assertions"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Ian Macalinao <me@ianm.com>"]
+description = "Assertion helpers for testing transaction results in TestSVM"
+documentation = "https://docs.rs/testsvm-assertions"
+homepage = "https://github.com/macalinao/testsvm"
+repository = "https://github.com/macalinao/testsvm"
+readme = "README.md"
+keywords = [
+    "ian-macalinao",
+    "solana",
+    "svm",
+    "testing",
+    "assertions",
+    "testsvm"
+]
+categories = ["development-tools::testing"]
+
+[dependencies]
+testsvm-core = { version = "0.1.1", path = "../testsvm-core" }
+anyhow = "1.0"
+litesvm = "0.6.1"
+solana-sdk = "2.2.1"
+
+[dev-dependencies]
+testsvm-spl = { version = "0.1.0", path = "../testsvm-spl" }
+anchor-spl = { version = "0.31.1", features = ["token"] }

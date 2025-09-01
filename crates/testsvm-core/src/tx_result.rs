@@ -22,7 +22,7 @@ use colored::Colorize;
 use litesvm::types::{FailedTransactionMetadata, TransactionMetadata};
 use solana_sdk::transaction::Transaction;
 
-use crate::AddressBook;
+use solana_address_book::AddressBook;
 
 /// Error type representing a failed transaction with detailed metadata.
 ///

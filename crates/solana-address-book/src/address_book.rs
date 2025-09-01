@@ -1,6 +1,6 @@
 //! Core address book implementation for managing Solana addresses with labels and roles.
 
-use crate::pda_seeds::{SeedPart, find_pda_with_bump_and_strings};
+use crate::pda_seeds::find_pda_with_bump_and_strings;
 use crate::registered_address::{AddressRole, RegisteredAddress};
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::system_program;
@@ -174,65 +174,6 @@ impl AddressBook {
         self.add(pubkey, label, RegisteredAddress::wallet(pubkey))
     }
 
-    /// Adds a token mint address to the address book.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the label already exists with a different address.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use solana_address_book::AddressBook;
-    /// use anchor_lang::prelude::*;
-    ///
-    /// let mut book = AddressBook::new();
-    /// let mint = Pubkey::new_unique();
-    ///
-    /// book.add_mint(mint, "usdc_mint".to_string()).unwrap();
-    /// assert_eq!(book.get_label(&mint), "usdc_mint");
-    /// ```
-    pub fn add_mint(&mut self, pubkey: Pubkey, label: String) -> Result<()> {
-        self.add(pubkey, label, RegisteredAddress::mint(pubkey))
-    }
-
-    /// Adds an Associated Token Account (ATA) address to the address book.
-    ///
-    /// # Arguments
-    ///
-    /// * `pubkey` - The ATA's public key
-    /// * `label` - Human-readable label for the ATA
-    /// * `mint` - The token mint public key
-    /// * `owner` - The owner's public key
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the label already exists with a different address.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use solana_address_book::AddressBook;
-    /// use anchor_lang::prelude::*;
-    ///
-    /// let mut book = AddressBook::new();
-    /// let ata = Pubkey::new_unique();
-    /// let mint = Pubkey::new_unique();
-    /// let owner = Pubkey::new_unique();
-    ///
-    /// book.add_ata(ata, "alice_usdc".to_string(), mint, owner).unwrap();
-    /// assert_eq!(book.get_label(&ata), "alice_usdc");
-    /// ```
-    pub fn add_ata(
-        &mut self,
-        pubkey: Pubkey,
-        label: String,
-        mint: Pubkey,
-        owner: Pubkey,
-    ) -> Result<()> {
-        self.add(pubkey, label, RegisteredAddress::ata(pubkey, mint, owner))
-    }
-
     /// Adds a custom role address to the address book.
     ///
     /// Use this for addresses that don't fit into the standard categories.
@@ -357,7 +298,7 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use solana_address_book::{AddressBook, SeedPart};
+    /// use solana_address_book::AddressBook;
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
@@ -366,7 +307,7 @@ impl AddressBook {
     ///
     /// let (pda, bump) = book.find_pda_with_bump(
     ///     "user_vault",
-    ///     &[&"vault" as &dyn SeedPart, &user as &dyn SeedPart],
+    ///     &[b"vault", user.as_ref()],
     ///     program
     /// ).unwrap();
     ///
@@ -375,7 +316,7 @@ impl AddressBook {
     pub fn find_pda_with_bump(
         &mut self,
         label: &str,
-        seeds: &[&dyn SeedPart],
+        seeds: &[&[u8]],
         program_id: Pubkey,
     ) -> Result<(Pubkey, u8)> {
         // Use the helper function from pda_seeds module
@@ -580,13 +521,13 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use solana_address_book::AddressBook;
+    /// use solana_address_book::{AddressBook, RegisteredAddress};
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
     /// let token = Pubkey::new_unique();
     ///
-    /// book.add_mint(token, "my_token".to_string()).unwrap();
+    /// book.add(token, "my_token".to_string(), RegisteredAddress::mint(token)).unwrap();
     ///
     /// let text = format!("Transfer to {}", token);
     /// let formatted = book.replace_addresses_in_text(&text);
@@ -628,12 +569,13 @@ impl AddressBook {
     /// # Example
     ///
     /// ```
-    /// use solana_address_book::AddressBook;
+    /// use solana_address_book::{AddressBook, RegisteredAddress};
     /// use anchor_lang::prelude::*;
     ///
     /// let mut book = AddressBook::new();
     /// book.add_wallet(Pubkey::new_unique(), "alice".to_string()).unwrap();
-    /// book.add_mint(Pubkey::new_unique(), "usdc".to_string()).unwrap();
+    /// let mint = Pubkey::new_unique();
+    /// book.add(mint, "usdc".to_string(), RegisteredAddress::mint(mint)).unwrap();
     ///
     /// // Prints a formatted table of all addresses
     /// book.print_all();
@@ -863,31 +805,35 @@ mod tests {
     }
 
     #[test]
-    fn test_add_mint() {
+    fn test_add_mint() -> Result<()> {
         let mut book = AddressBook::new();
         let pubkey = Pubkey::new_unique();
 
-        book.add_mint(pubkey, "test_mint".to_string()).unwrap();
+        book.add(
+            pubkey,
+            "test_mint".to_string(),
+            RegisteredAddress::mint(pubkey),
+        )?;
 
         let (label, registered) = book.get_first(&pubkey).unwrap();
         assert_eq!(*label, "test_mint");
         matches!(registered.role, AddressRole::Mint);
+
+        Ok(())
     }
 
     #[test]
-    fn test_add_ata() {
+    fn test_add_ata() -> Result<()> {
         let mut book = AddressBook::new();
         let ata_pubkey = Pubkey::new_unique();
         let mint_pubkey = Pubkey::new_unique();
         let owner_pubkey = Pubkey::new_unique();
 
-        book.add_ata(
+        book.add(
             ata_pubkey,
             "test_ata".to_string(),
-            mint_pubkey,
-            owner_pubkey,
-        )
-        .unwrap();
+            RegisteredAddress::ata(ata_pubkey, mint_pubkey, owner_pubkey),
+        )?;
 
         let (label, registered) = book.get_first(&ata_pubkey).unwrap();
         assert_eq!(*label, "test_ata");
@@ -896,7 +842,8 @@ mod tests {
             assert_eq!(*owner, owner_pubkey);
         } else {
             panic!("Expected ATA role");
-        }
+        };
+        Ok(())
     }
 
     #[test]
@@ -968,7 +915,8 @@ mod tests {
 
         book.add_wallet(wallet1, "wallet1".to_string()).unwrap();
         book.add_wallet(wallet2, "wallet2".to_string()).unwrap();
-        book.add_mint(mint, "mint1".to_string()).unwrap();
+        book.add(mint, "mint1".to_string(), RegisteredAddress::mint(mint))
+            .unwrap();
 
         let wallets = book.get_all_by_role_type("wallet");
         assert_eq!(wallets.len(), 2);
@@ -983,9 +931,7 @@ mod tests {
     #[test]
     fn test_pda_creation() {
         let program_id = Pubkey::new_unique();
-        let seeds: Vec<&dyn SeedPart> = vec![&"test", &"seed"];
-
-        let (_pubkey, bump, registered) = RegisteredAddress::pda(&seeds, &program_id);
+        let (_pubkey, bump, registered) = RegisteredAddress::pda(&[b"test", b"seed"], &program_id);
 
         if let AddressRole::Pda {
             seeds: pda_seeds,

@@ -14,10 +14,10 @@
 //! - **Token Operations**: Handle wrapped token minting and distribution
 //! - **Type Safety**: Strongly typed account references for all pool components
 
-use anchor_lang::{InstructionData, prelude::*};
+use anchor_lang::prelude::*;
 use anyhow::Result;
 use solana_sdk::instruction::Instruction;
-use testsvm::{AccountRef, TestSVM, anchor_instruction};
+use testsvm::prelude::*;
 
 use crate::{TestMergeMiner, quarry_merge_mine, quarry_mine};
 
@@ -39,14 +39,14 @@ impl TestMergePool {
         // Calculate merge pool PDA
         let pool = env.get_pda::<quarry_merge_mine::accounts::MergePool>(
             &format!("merge_pool[{label}].pool"),
-            &[&"MergePool", &primary_mint.key],
+            &[b"MergePool", primary_mint.key.as_ref()],
             quarry_merge_mine::ID,
         )?;
 
         // Calculate replica mint PDA
         let replica_mint = env.get_pda::<anchor_spl::token::Mint>(
             &format!("merge_pool[{label}].replica_mint"),
-            &[&"ReplicaMint", &pool.key],
+            &[b"ReplicaMint", pool.key.as_ref()],
             quarry_merge_mine::ID,
         )?;
 
@@ -86,7 +86,7 @@ impl TestMergePool {
         // Calculate merge miner PDA
         let merge_miner = env.get_pda(
             &format!("merge_miner[{label}]"),
-            &[&"MergeMiner", &self.pool.key, &owner],
+            &[b"MergeMiner", self.pool.key.as_ref(), owner.as_ref()],
             quarry_merge_mine::ID,
         )?;
 
@@ -147,7 +147,7 @@ impl TestMergePool {
         // Get primary miner PDA
         let primary_miner = env.get_pda::<quarry_mine::accounts::Miner>(
             "primary_miner",
-            &[&"Miner", primary_quarry, &merge_miner],
+            &[b"Miner", primary_quarry.as_ref(), merge_miner.as_ref()],
             crate::quarry_mine::ID,
         )?;
 

@@ -37,14 +37,8 @@ impl DerivedPda {
     }
 }
 
-/// Trait for types that can be used as PDA seeds
-pub trait SeedPart: AsRef<[u8]> {}
-
-// Blanket implementation for all types that can be referenced as byte slices
-impl<T: AsRef<[u8]> + ?Sized> SeedPart for T {}
-
 /// Convert a seed to a string representation for debugging
-pub fn seed_to_string(seed: &dyn SeedPart) -> String {
+pub fn seed_to_string<T: AsRef<[u8]>>(seed: T) -> String {
     // Try to convert common types to readable strings
     let bytes = seed.as_ref();
 
@@ -66,47 +60,18 @@ pub fn seed_to_string(seed: &dyn SeedPart) -> String {
     hex::encode(bytes)
 }
 
-/// Find a PDA with bump given seeds and program ID
-///
-/// This function calculates a Program Derived Address (PDA) and its bump seed
-/// from the provided seeds and program ID.
-///
-/// # Arguments
-/// * `seeds` - Array of seed parts that implement the SeedPart trait
-/// * `program_id` - The program ID to derive the address for
-///
-/// # Returns
-/// * `(Pubkey, u8)` - The derived public key and bump seed
-///
-/// # Example
-/// ```
-/// use anchor_lang::prelude::*;
-/// use solana_address_book::pda_seeds::{find_pda_with_bump, SeedPart};
-///
-/// let program_id = Pubkey::new_unique();
-/// let seeds: Vec<&dyn SeedPart> = vec![&"user", &"profile"];
-/// let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
-/// ```
-pub fn find_pda_with_bump(seeds: &[&dyn SeedPart], program_id: &Pubkey) -> (Pubkey, u8) {
-    // Convert seeds to byte slices for PDA calculation
-    let seed_bytes: Vec<&[u8]> = seeds.iter().map(|s| s.as_ref()).collect();
-
-    // Find the PDA and bump
-    Pubkey::find_program_address(&seed_bytes, program_id)
-}
-
 /// Find a PDA with bump and return along with seed strings for display
 ///
 /// This function is similar to `find_pda_with_bump` but also returns
 /// string representations of the seeds for debugging/display purposes.
 ///
 /// # Arguments
-/// * `seeds` - Array of seed parts that implement the SeedPart trait
+/// * `seeds` - Array of items that can be referenced as byte slices
 /// * `program_id` - The program ID to derive the address for
 ///
 /// # Returns
 /// * `DerivedPda` - Struct containing the derived public key, bump seed, seed strings, and raw seeds
-pub fn find_pda_with_bump_and_strings(seeds: &[&dyn SeedPart], program_id: &Pubkey) -> DerivedPda {
+pub fn find_pda_with_bump_and_strings(seeds: &[&[u8]], program_id: &Pubkey) -> DerivedPda {
     // Convert seeds to byte slices for PDA calculation
     let seed_bytes: Vec<&[u8]> = seeds.iter().map(|s| s.as_ref()).collect();
 
@@ -114,10 +79,10 @@ pub fn find_pda_with_bump_and_strings(seeds: &[&dyn SeedPart], program_id: &Pubk
     let (pubkey, bump) = Pubkey::find_program_address(&seed_bytes, program_id);
 
     // Convert seeds to strings for display
-    let seed_strings: Vec<String> = seeds.iter().map(|s| seed_to_string(*s)).collect();
+    let seed_strings: Vec<String> = seeds.iter().map(seed_to_string).collect();
 
     // Store owned copies of the seed bytes
-    let seeds_owned: Vec<Vec<u8>> = seed_bytes.iter().map(|s| s.to_vec()).collect();
+    let seeds_owned: Vec<Vec<u8>> = seeds.iter().map(|s| s.as_ref().to_vec()).collect();
 
     DerivedPda {
         key: pubkey,
@@ -135,12 +100,11 @@ mod tests {
     fn test_string_seed() {
         let program_id = Pubkey::new_unique();
         let seed = "test_seed";
-        let seeds: Vec<&dyn SeedPart> = vec![&seed];
 
-        let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, bump) = Pubkey::find_program_address(&[seed.as_bytes()], &program_id);
 
         // Verify the PDA is deterministic
-        let (pda2, bump2) = find_pda_with_bump(&seeds, &program_id);
+        let (pda2, bump2) = Pubkey::find_program_address(&[seed.as_bytes()], &program_id);
         assert_eq!(pda, pda2);
         assert_eq!(bump, bump2);
 
@@ -153,13 +117,13 @@ mod tests {
         let program_id = Pubkey::new_unique();
         let seed1 = "user";
         let seed2 = "profile";
-        let seeds: Vec<&dyn SeedPart> = vec![&seed1, &seed2];
+        let seeds: Vec<&[u8]> = vec![seed1.as_bytes(), seed2.as_bytes()];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
 
         // Verify different seed order produces different PDA
-        let seeds_reversed: Vec<&dyn SeedPart> = vec![&seed2, &seed1];
-        let (pda_reversed, _) = find_pda_with_bump(&seeds_reversed, &program_id);
+        let seeds_reversed: Vec<&[u8]> = vec![seed2.as_bytes(), seed1.as_bytes()];
+        let (pda_reversed, _) = Pubkey::find_program_address(&seeds_reversed, &program_id);
         assert_ne!(pda, pda_reversed);
     }
 
@@ -167,12 +131,12 @@ mod tests {
     fn test_pubkey_seed() {
         let program_id = Pubkey::new_unique();
         let user_pubkey = Pubkey::new_unique();
-        let seeds: Vec<&dyn SeedPart> = vec![&user_pubkey];
+        let seeds: Vec<&[u8]> = vec![user_pubkey.as_ref()];
 
-        let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, bump) = Pubkey::find_program_address(&seeds, &program_id);
 
         // Verify the PDA is deterministic with pubkey seed
-        let (pda2, bump2) = find_pda_with_bump(&seeds, &program_id);
+        let (pda2, bump2) = Pubkey::find_program_address(&seeds, &program_id);
         assert_eq!(pda, pda2);
         assert_eq!(bump, bump2);
     }
@@ -185,9 +149,9 @@ mod tests {
         let id: u64 = 12345;
         let id_bytes = id.to_le_bytes();
 
-        let seeds: Vec<&dyn SeedPart> = vec![&prefix, &owner, &id_bytes];
+        let seeds: Vec<&[u8]> = vec![prefix.as_bytes(), owner.as_ref(), &id_bytes];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
         assert!(!pda.is_on_curve());
     }
 
@@ -195,9 +159,9 @@ mod tests {
     fn test_byte_array_seed() {
         let program_id = Pubkey::new_unique();
         let bytes: [u8; 8] = [1, 2, 3, 4, 5, 6, 7, 8];
-        let seeds: Vec<&dyn SeedPart> = vec![&bytes];
+        let seeds: Vec<&[u8]> = vec![&bytes];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
         assert!(!pda.is_on_curve());
     }
 
@@ -205,9 +169,9 @@ mod tests {
     fn test_slice_seed() {
         let program_id = Pubkey::new_unique();
         let vec_bytes = vec![9, 8, 7, 6, 5, 4, 3, 2, 1];
-        let seeds: Vec<&dyn SeedPart> = vec![&vec_bytes];
+        let seeds: Vec<&[u8]> = vec![&vec_bytes];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
         assert!(!pda.is_on_curve());
     }
 
@@ -219,7 +183,7 @@ mod tests {
         let seed3: u32 = 42;
         let seed3_bytes = seed3.to_le_bytes();
 
-        let seeds: Vec<&dyn SeedPart> = vec![&seed1, &seed2, &seed3_bytes];
+        let seeds: Vec<&[u8]> = vec![seed1.as_bytes(), seed2.as_ref(), &seed3_bytes];
 
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
 
@@ -229,7 +193,7 @@ mod tests {
         assert_eq!(derived_pda.seed_strings[1], seed2.to_string());
 
         // Verify the PDA matches what we'd get from the basic function
-        let (pda2, bump2) = find_pda_with_bump(&seeds, &program_id);
+        let (pda2, bump2) = Pubkey::find_program_address(&seeds, &program_id);
         assert_eq!(derived_pda.key, pda2);
         assert_eq!(derived_pda.bump, bump2);
 
@@ -252,9 +216,9 @@ mod tests {
     #[test]
     fn test_empty_seeds() {
         let program_id = Pubkey::new_unique();
-        let seeds: Vec<&dyn SeedPart> = vec![];
+        let seeds: Vec<&[u8]> = vec![];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
 
         // Empty seeds should still produce a valid PDA
         assert!(!pda.is_on_curve());
@@ -265,9 +229,9 @@ mod tests {
         let program_id = Pubkey::new_unique();
         // Max seed length is 32 bytes per seed
         let max_seed = vec![0u8; 32];
-        let seeds: Vec<&dyn SeedPart> = vec![&max_seed];
+        let seeds: Vec<&[u8]> = vec![&max_seed];
 
-        let (pda, _bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, _bump) = Pubkey::find_program_address(&seeds, &program_id);
         assert!(!pda.is_on_curve());
     }
 
@@ -276,10 +240,10 @@ mod tests {
         let program_id1 = Pubkey::new_unique();
         let program_id2 = Pubkey::new_unique();
         let seed = "same_seed";
-        let seeds: Vec<&dyn SeedPart> = vec![&seed];
+        let seeds: Vec<&[u8]> = vec![seed.as_bytes()];
 
-        let (pda1, _) = find_pda_with_bump(&seeds, &program_id1);
-        let (pda2, _) = find_pda_with_bump(&seeds, &program_id2);
+        let (pda1, _) = Pubkey::find_program_address(&seeds, &program_id1);
+        let (pda2, _) = Pubkey::find_program_address(&seeds, &program_id2);
 
         // Same seeds with different programs should produce different PDAs
         assert_ne!(pda1, pda2);
@@ -289,11 +253,11 @@ mod tests {
     fn test_bump_determinism() {
         let program_id = Pubkey::new_unique();
         let seed = "deterministic";
-        let seeds: Vec<&dyn SeedPart> = vec![&seed];
+        let seeds: Vec<&[u8]> = vec![seed.as_bytes()];
 
         // Run multiple times to ensure determinism
         let results: Vec<(Pubkey, u8)> = (0..10)
-            .map(|_| find_pda_with_bump(&seeds, &program_id))
+            .map(|_| Pubkey::find_program_address(&seeds, &program_id))
             .collect();
 
         // All results should be identical
@@ -308,9 +272,9 @@ mod tests {
         // Test with a known program ID to ensure consistency
         let program_id = Pubkey::default(); // All zeros
         let seed = "test";
-        let seeds: Vec<&dyn SeedPart> = vec![&seed];
+        let seeds: Vec<&[u8]> = vec![seed.as_bytes()];
 
-        let (pda, bump) = find_pda_with_bump(&seeds, &program_id);
+        let (pda, bump) = Pubkey::find_program_address(&seeds, &program_id);
 
         // The PDA should be consistent for these known inputs
         let (expected_pda, expected_bump) =
@@ -325,7 +289,7 @@ mod tests {
         let program_id = Pubkey::new_unique();
         let seed1 = "vault";
         let seed2 = Pubkey::new_unique();
-        let seeds: Vec<&dyn SeedPart> = vec![&seed1, &seed2];
+        let seeds: Vec<&[u8]> = vec![seed1.as_ref(), seed2.as_ref()];
 
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
 
@@ -351,7 +315,11 @@ mod tests {
         let byte_seed: u64 = 999;
         let byte_seed_bytes = byte_seed.to_le_bytes();
 
-        let seeds: Vec<&dyn SeedPart> = vec![&string_seed, &pubkey_seed, &byte_seed_bytes];
+        let seeds: Vec<&[u8]> = vec![
+            string_seed.as_bytes(),
+            pubkey_seed.as_ref(),
+            &byte_seed_bytes,
+        ];
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
 
         // Check all fields are populated correctly
@@ -389,7 +357,7 @@ mod tests {
         );
 
         // Using our helper with the same seeds
-        let seeds: Vec<&dyn SeedPart> = vec![&"Miner", &replica_quarry, &merge_miner];
+        let seeds: Vec<&[u8]> = vec![b"Miner", replica_quarry.as_ref(), merge_miner.as_ref()];
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
 
         // Verify they produce the same result
@@ -428,7 +396,12 @@ mod tests {
 
         // Using our helper
         let vault_id_bytes = vault_id.to_le_bytes();
-        let seeds: Vec<&dyn SeedPart> = vec![&"vault", &authority, &token_mint, &vault_id_bytes];
+        let seeds: Vec<&[u8]> = vec![
+            b"vault",
+            authority.as_ref(),
+            token_mint.as_ref(),
+            &vault_id_bytes,
+        ];
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &program_id);
 
         // Must produce identical results
@@ -454,7 +427,11 @@ mod tests {
         );
 
         // Using our helper
-        let seeds: Vec<&dyn SeedPart> = vec![&"metadata", &metadata_program_id, &mint_pubkey];
+        let seeds: Vec<&[u8]> = vec![
+            b"metadata",
+            metadata_program_id.as_ref(),
+            mint_pubkey.as_ref(),
+        ];
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &metadata_program_id);
 
         // Verify exact match
@@ -482,7 +459,7 @@ mod tests {
         );
 
         // Using our helper
-        let seeds: Vec<&dyn SeedPart> = vec![&wallet, &token_program_id, &mint];
+        let seeds: Vec<&[u8]> = vec![wallet.as_ref(), token_program_id.as_ref(), mint.as_ref()];
         let derived_pda = find_pda_with_bump_and_strings(&seeds, &associated_token_program_id);
 
         // Must match the expected ATA
@@ -524,11 +501,15 @@ mod tests {
         // Using our helper with same seeds
         let escrow_id_bytes = escrow_id.to_le_bytes();
         let timestamp_bytes = timestamp.to_le_bytes();
-        let seeds: Vec<&dyn SeedPart> =
-            vec![&"escrow", &initializer, &escrow_id_bytes, &timestamp_bytes];
+        let seeds: Vec<&[u8]> = vec![
+            b"escrow",
+            initializer.as_ref(),
+            &escrow_id_bytes,
+            &timestamp_bytes,
+        ];
 
         // First, use the basic function
-        let (pda_basic, bump_basic) = find_pda_with_bump(&seeds, &program_id);
+        let (pda_basic, bump_basic) = Pubkey::find_program_address(&seeds, &program_id);
         assert_eq!(pda_basic, expected_escrow_pda);
         assert_eq!(bump_basic, expected_bump);
 
