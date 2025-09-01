@@ -9,14 +9,7 @@ documentation = "https://docs.rs/testsvm-assertions"
 homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
 readme = "README.md"
-keywords = [
-    "ian-macalinao",
-    "solana",
-    "svm",
-    "testing",
-    "assertions",
-    "testsvm"
-]
+keywords = ["ian-macalinao", "solana", "svm", "assertions", "testsvm"]
 categories = ["development-tools::testing"]
 
 [dependencies]

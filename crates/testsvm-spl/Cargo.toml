@@ -9,15 +9,7 @@ documentation = "https://docs.rs/testsvm-spl"
 homepage = "https://github.com/macalinao/testsvm"
 repository = "https://github.com/macalinao/testsvm"
 readme = "README.md"
-keywords = [
-    "ian-macalinao",
-    "spl",
-    "token",
-    "solana",
-    "testing",
-    "blockchain",
-    "testsvm"
-]
+keywords = ["ian-macalinao", "spl", "token", "solana", "testsvm"]
 categories = ["development-tools::testing", "cryptography::cryptocurrencies"]
 
 [dependencies]
