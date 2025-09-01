@@ -10,7 +10,12 @@ pub use crate::{AccountRef, TXError, TXResult, TestSVM};
 pub use solana_address_book::{AddressBook, AddressRole, RegisteredAddress};
 
 // Commonly used Anchor types
-pub use anchor_lang::{InstructionData, prelude::*};
+pub use anchor_lang::{
+    AccountDeserialize, AccountSerialize, Discriminator, InstructionData, Key, ToAccountInfos,
+    ToAccountMetas,
+};
+
+pub use anyhow::Result;
 
 // Commonly used Solana SDK types
 pub use solana_sdk::{

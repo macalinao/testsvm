@@ -7,7 +7,7 @@
 //! and performing token operations.
 
 use anchor_spl::token;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use testsvm_core::prelude::*;
 
 pub mod prelude;

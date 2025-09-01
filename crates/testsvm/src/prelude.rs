@@ -10,11 +10,7 @@
 //! ```
 
 // Core TestSVM types
-pub use crate::{
-    AccountRef, TXError, TXErrorAssertions, TXResult, TXResultAssertions, TXSuccessAssertions,
-    TestSVM,
-};
-
-pub use crate::TestSVMSPLHelpers;
 pub use anchor_spl;
+pub use testsvm_assertions::{TXErrorAssertions, TXResultAssertions, TXSuccessAssertions};
 pub use testsvm_core::prelude::*;
+pub use testsvm_spl::prelude::*;

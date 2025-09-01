@@ -12,8 +12,4 @@
 //! This will import everything from testsvm-core plus:
 //! - `TestSVMSPLHelpers` - SPL Token helper trait
 
-// Re-export testsvm-core prelude
-pub use testsvm_core::prelude::*;
-
-// SPL-specific exports  
 pub use crate::TestSVMSPLHelpers;

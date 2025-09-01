@@ -16,8 +16,7 @@
 use anyhow::*;
 use litesvm::types::TransactionMetadata;
 use solana_sdk::instruction::InstructionError;
-
-use testsvm_core::{TXError, TXResult};
+use testsvm_core::prelude::*;
 
 /// Provides assertion methods for failed transactions.
 ///
@@ -172,7 +171,9 @@ pub trait TXResultAssertions {
     /// # Example
     ///
     /// ```rust
-    /// # use testsvm::{TestSVM, TXResultAssertions, TestSVMSPLHelpers};
+    /// # use testsvm_core::prelude::*;
+    /// # use testsvm_spl::prelude::*;
+    /// # use testsvm_assertions::*;
     /// # use solana_sdk::signature::Signer;
     /// # use anyhow::Result;
     /// # fn main() -> Result<()> {
@@ -222,7 +223,9 @@ pub trait TXResultAssertions {
     /// # Example
     ///
     /// ```rust
-    /// # use testsvm::{TestSVM, TXResultAssertions, TestSVMSPLHelpers};
+    /// # use testsvm_core::prelude::*;
+    /// # use testsvm_spl::prelude::*;
+    /// # use testsvm_assertions::*;
     /// # use solana_sdk::signature::Signer;
     /// # use anyhow::Result;
     /// # fn main() -> Result<()> {

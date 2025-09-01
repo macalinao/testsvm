@@ -15,10 +15,6 @@
 //! - **Authority Control**: Manage rewarder authority and pause states
 
 use crate::{TestMintWrapper, quarry_mine, quarry_mint_wrapper};
-use anchor_lang::prelude::*;
-use anyhow::Result;
-use solana_sdk::signature::{Keypair, Signer};
-use testsvm::TXResult;
 use testsvm::prelude::*;
 
 /// Test rewarder with labeled accounts
