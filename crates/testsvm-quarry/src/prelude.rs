@@ -13,7 +13,6 @@
 //! ## Included Exports
 //!
 //! - **Quarry Test Types**: Test helpers for rewarder, quarry, miners, and pools
-//! - **TestSVM Core**: All exports from testsvm::prelude
 //! - **Quarry Programs**: Generated types from declare_program! macros
 //! - **Setup Functions**: Helper functions for program initialization
 
