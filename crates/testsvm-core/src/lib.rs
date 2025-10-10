@@ -65,15 +65,11 @@ impl TestSVM {
     pub fn execute_transaction(&mut self, transaction: Transaction) -> TXResult {
         match self.svm.send_transaction(transaction.clone()) {
             Result::Ok(tx_result) => Result::Ok(tx_result),
-            Err(e) => {
-                let tx_error = TXError {
-                    transaction,
-                    metadata: e.clone(),
-                };
-                tx_error.print_error(&self.address_book);
-                self.address_book.print_all();
-                Err(Box::new(tx_error))
-            }
+            Err(e) => Err(Box::new(TXError {
+                transaction,
+                metadata: e.clone(),
+                address_book: self.address_book.clone(),
+            })),
         }
     }
 

@@ -294,7 +294,13 @@ impl TXResultAssertions for TXResult {
     }
 
     fn succeeds(self) -> Result<TXSuccessAssertions> {
-        let metadata = self?;
-        Ok(TXSuccessAssertions { metadata })
+        match self {
+            Result::Ok(metadata) => Ok(TXSuccessAssertions { metadata }),
+            Result::Err(e) => {
+                e.print_error();
+                e.address_book.print_all();
+                Err(anyhow::anyhow!("Unexpected failed transaction: {}", e))
+            }
+        }
     }
 }
