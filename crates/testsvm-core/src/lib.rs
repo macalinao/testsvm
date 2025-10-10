@@ -156,10 +156,21 @@ impl TestSVM {
         seeds: &[&[u8]],
         program_id: Pubkey,
     ) -> Result<AccountRef<T>> {
-        let (pubkey, _bump) = self
+        let (pda, _) = self.get_pda_with_bump(label, seeds, program_id)?;
+        Ok(pda)
+    }
+
+    /// Finds a program derived address and return an [AccountRef] with proper type information and bump seed.
+    pub fn get_pda_with_bump<T: anchor_lang::AccountDeserialize>(
+        &mut self,
+        label: &str,
+        seeds: &[&[u8]],
+        program_id: Pubkey,
+    ) -> Result<(AccountRef<T>, u8)> {
+        let (pubkey, bump) = self
             .address_book
             .find_pda_with_bump(label, seeds, program_id)?;
-        Ok(AccountRef::new(pubkey))
+        Ok((AccountRef::new(pubkey), bump))
     }
 
     /// Advance the time by the specified number of seconds
