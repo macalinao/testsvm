@@ -15,7 +15,7 @@
 
 use anyhow::*;
 use litesvm::types::TransactionMetadata;
-use solana_sdk::instruction::InstructionError;
+use solana_sdk::{instruction::InstructionError, program_error::ProgramError};
 use testsvm_core::prelude::*;
 
 /// Provides assertion methods for failed transactions.
@@ -123,6 +123,30 @@ impl TXErrorAssertions {
             _ => Err(anyhow!(
                 "Expected custom error code {}, but got '{}'",
                 error_code,
+                self.error.metadata.err.to_string()
+            )),
+        }
+    }
+
+    /// Asserts that the transaction failed with a specific program error.
+    pub fn with_program_error<T: Into<ProgramError>>(&self, err: T) -> Result<()> {
+        let program_error: ProgramError = err.into();
+        match self.error.metadata.err.clone() {
+            solana_sdk::transaction::TransactionError::InstructionError(_, err) => {
+                let result_program_error: ProgramError = err.try_into()?;
+                if result_program_error == program_error {
+                    Ok(())
+                } else {
+                    Err(anyhow!(
+                        "Expected custom program error {}, but got '{}'",
+                        program_error,
+                        result_program_error
+                    ))
+                }
+            }
+            _ => Err(anyhow!(
+                "Expected custom program error {}, but got instruction error '{}'",
+                program_error,
                 self.error.metadata.err.to_string()
             )),
         }
