@@ -2759,7 +2759,7 @@ dependencies = [
 
 [[package]]
 name = "solana-address-book"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -5158,7 +5158,7 @@ dependencies = [
 
 [[package]]
 name = "testsvm"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -5176,7 +5176,7 @@ dependencies = [
 
 [[package]]
 name = "testsvm-assertions"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anchor-spl",
  "anyhow",
@@ -5188,7 +5188,7 @@ dependencies = [
 
 [[package]]
 name = "testsvm-core"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anchor-lang",
  "anchor-utils",
@@ -5201,7 +5201,7 @@ dependencies = [
 
 [[package]]
 name = "testsvm-quarry"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -5214,7 +5214,7 @@ dependencies = [
 
 [[package]]
 name = "testsvm-spl"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
