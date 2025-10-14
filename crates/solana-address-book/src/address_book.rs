@@ -14,7 +14,7 @@ use std::collections::{HashMap, HashSet};
 /// Solana addresses by their public keys, labels, and roles. It's designed
 /// to help with debugging and transaction analysis by providing meaningful
 /// context for addresses.
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct AddressBook {
     addresses: HashMap<Pubkey, Vec<(String, RegisteredAddress)>>,
     registered_addresses: HashSet<RegisteredAddress>,

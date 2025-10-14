@@ -57,7 +57,8 @@ fn test_set_rewards_share_authority_check() -> Result<()> {
     );
 
     env.execute_ixs_with_signers(&[unauthorized_ix], &[&unauthorized])
-        .fails()?;
+        .fails()?
+        .with_anchor_error("Unauthorized")?;
 
     // Verify share remains unchanged
     let quarry_data = quarry.fetch_quarry(&env)?;

@@ -65,15 +65,11 @@ impl TestSVM {
     pub fn execute_transaction(&mut self, transaction: Transaction) -> TXResult {
         match self.svm.send_transaction(transaction.clone()) {
             Result::Ok(tx_result) => Result::Ok(tx_result),
-            Err(e) => {
-                let tx_error = TXError {
-                    transaction,
-                    metadata: e.clone(),
-                };
-                tx_error.print_error(&self.address_book);
-                self.address_book.print_all();
-                Err(Box::new(tx_error))
-            }
+            Err(e) => Err(Box::new(TXError {
+                transaction,
+                metadata: e.clone(),
+                address_book: self.address_book.clone(),
+            })),
         }
     }
 
@@ -160,10 +156,21 @@ impl TestSVM {
         seeds: &[&[u8]],
         program_id: Pubkey,
     ) -> Result<AccountRef<T>> {
-        let (pubkey, _bump) = self
+        let (pda, _) = self.get_pda_with_bump(label, seeds, program_id)?;
+        Ok(pda)
+    }
+
+    /// Finds a program derived address and return an [AccountRef] with proper type information and bump seed.
+    pub fn get_pda_with_bump<T: anchor_lang::AccountDeserialize>(
+        &mut self,
+        label: &str,
+        seeds: &[&[u8]],
+        program_id: Pubkey,
+    ) -> Result<(AccountRef<T>, u8)> {
+        let (pubkey, bump) = self
             .address_book
             .find_pda_with_bump(label, seeds, program_id)?;
-        Ok(AccountRef::new(pubkey))
+        Ok((AccountRef::new(pubkey), bump))
     }
 
     /// Advance the time by the specified number of seconds

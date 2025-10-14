@@ -34,6 +34,8 @@ pub struct TXError {
     pub transaction: Transaction,
     /// Underlying failed transaction metadata
     pub metadata: FailedTransactionMetadata,
+    /// Address book at the time of transaction failure
+    pub address_book: AddressBook,
 }
 
 impl Error for TXError {}
@@ -46,7 +48,7 @@ impl Display for TXError {
 
 impl TXError {
     /// Print the error details, formatted using an [AddressBook].
-    pub fn print_error(&self, address_book: &AddressBook) {
+    pub fn print_error(&self) {
         println!(
             "\n{} {}",
             "❌".red(),
@@ -61,7 +63,8 @@ impl TXError {
         );
         println!(
             "{}",
-            address_book.replace_addresses_in_text(&self.metadata.meta.pretty_logs())
+            self.address_book
+                .replace_addresses_in_text(&self.metadata.meta.pretty_logs())
         );
 
         // Log each instruction for debugging
@@ -76,7 +79,7 @@ impl TXError {
                 "   {} {}: {}",
                 "Instruction".dimmed(),
                 i.to_string().bold(),
-                address_book.format_address(&program_id)
+                self.address_book.format_address(&program_id)
             );
             println!(
                 "   {} {}",
@@ -111,7 +114,7 @@ impl TXError {
                     "     {} {}: {}{}",
                     "Account".dimmed(),
                     j.to_string().bold(),
-                    address_book.format_address(&account_key),
+                    self.address_book.format_address(&account_key),
                     flags_str
                 );
             }
