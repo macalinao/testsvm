@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/macalinao/testsvm/compare/solana-address-book-v0.2.0...solana-address-book-v0.2.1) - 2025-10-14
+
+### Other
+
+- don't log address book on failures if they are expected
+
 ## [0.2.0](https://github.com/macalinao/testsvm/compare/solana-address-book-v0.1.1...solana-address-book-v0.2.0) - 2025-09-01
 
 ### Other

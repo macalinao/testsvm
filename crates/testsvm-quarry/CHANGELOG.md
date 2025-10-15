@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/macalinao/testsvm/compare/testsvm-quarry-v0.2.0...testsvm-quarry-v0.2.1) - 2025-10-14
+
+### Fixed
+
+- fix bad comment
+
+### Other
+
+- don't log address book on failures if they are expected
+- Don't re-export the testsvm prelude in testsvm-quarry
+- Expose TestMintWrapper in the testsvm-quarry prelude
+
 ## [0.2.0](https://github.com/macalinao/testsvm/compare/testsvm-quarry-v0.1.0...testsvm-quarry-v0.2.0) - 2025-09-01
 
 ### Fixed
