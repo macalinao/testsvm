@@ -13,11 +13,11 @@ keywords = ["ian-macalinao", "solana", "addresses", "tracking", "blockchain"]
 categories = ["development-tools", "data-structures"]
 
 [dependencies]
-anchor-lang = "0.31.1"
+anchor-lang = "0.32.1"
 anyhow = "1.0"
 colored = "3.0"
 hex = "0.4"
 strum = { version = "0.27", features = ["derive"] }
-anchor-spl = "0.31.1"
+anchor-spl = "0.32.1"
 
 [dev-dependencies]
