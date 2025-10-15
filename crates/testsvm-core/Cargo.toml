@@ -14,7 +14,7 @@ categories = ["development-tools::testing", "cryptography::cryptocurrencies"]
 
 [dependencies]
 anyhow = "1.0"
-litesvm = "0.6"
+litesvm = "0.8"
 solana-sdk = "2.2"
 solana-address-book = { path = "../solana-address-book", version = "0.2.1" }
 anchor-lang = "0.31"

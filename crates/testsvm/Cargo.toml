@@ -22,6 +22,6 @@ anyhow = "1.0"
 anchor-lang = "0.31.1"
 anchor-spl = { version = "0.31.1", features = ["token"] }
 colored = "3.0"
-litesvm = "0.6.1"
+litesvm = "0.8.1"
 solana-sdk = "2.2.1"
 strum = { version = "0.27", features = ["derive"] }
