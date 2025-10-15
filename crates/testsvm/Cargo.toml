@@ -19,9 +19,9 @@ testsvm-assertions = { version = "0.1.1", path = "../testsvm-assertions" }
 testsvm-core = { version = "0.2.0", path = "../testsvm-core" }
 testsvm-spl = { version = "0.1.1", path = "../testsvm-spl" }
 anyhow = "1.0"
-anchor-lang = "0.31.1"
-anchor-spl = { version = "0.31.1", features = ["token"] }
+anchor-lang = "0.32.1"
+anchor-spl = { version = "0.32.1", features = ["token"] }
 colored = "3.0"
 litesvm = "0.6.1"
-solana-sdk = "2.2.1"
+solana-sdk = "3.0.0"
 strum = { version = "0.27", features = ["derive"] }

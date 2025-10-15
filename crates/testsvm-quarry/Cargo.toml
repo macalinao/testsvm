@@ -14,11 +14,11 @@ categories = ["development-tools::testing", "cryptography::cryptocurrencies"]
 
 [dependencies]
 anyhow = "1.0"
-anchor-lang = "0.31.1"
-anchor-spl = { version = "0.31.1", features = ["token", "associated_token"] }
+anchor-lang = "0.32.1"
+anchor-spl = { version = "0.32.1", features = ["token", "associated_token"] }
 litesvm = "0.6.1"
-solana-sdk = "2.2"
-solana-program = "2.2"
+solana-sdk = "3.0"
+solana-program = "3.0"
 testsvm = { version = "0.2.1", path = "../testsvm" }
 
 [dev-dependencies]
